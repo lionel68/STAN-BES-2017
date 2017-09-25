@@ -24,6 +24,12 @@ Quotes from Hobbs and Hilborn: "There is a danger that questions are chosen for 
 What is inference? How do we gather knowledge?
 
 What?
+
+
+## Structure:
+
+### Part 1: What is Bayesian data analysis (~10min)
+
 -> About inference in science: we see the data and we would like to know something about the process that generated them.
 -> Posterior, likelihood and priors
 -> A walkthrough example of a simple ABC computation following RB
@@ -31,48 +37,40 @@ What?
 -> the issue of sampling the posterior
 -> Example of BDA in ecology
 
-
-Why?
--> Bayes (probability) vs frequentise (repeat sampling), but also Bayes and frequentist (asymptotic convergence of the posterior to the likelihood under infinite sample size)
--> Questions Bayes can answer that Freq cannot
--> Flexible model building, uncertainty in all model parameters
--> Include more information about the data
-
-
-How?
--> The different options in R: BUGS, JAGS (r2jags,other packages allowing easy model fit with pre-set priors), STAN (rstan, rstanarm, brms)
--> Specificitis of model building and checking in BDA (chains, convergence, divergence)
--> The rest of the workshop
-
-
-## Structure:
-
-### Part 1: What is Bayesian data analysis (~10min)
-
 In this part I'd like to outline:
 
 
 * Why do we do stats in general, about inference, big world-small world dichotomy from StatRethinking
 * The bayesian formula: Posterior info = Likelihood * prior info
 * What is the likelihood, dnorm, show some brute-force, 2D examples (mean+sd)
-* What is prior infos, what kind of info do we generally have, how do we turn it into priors
-* What is posterior, combination of likelihood and prior infos, P(hypothesis | data)
+* What is prior infos, what kind of info do we generally have, how do we turn it into priors (in a way we always have __some__ prior info; uniform vs. weak priors)
+* What is posterior, combination of likelihood and prior infos, relative weight of each = f(sample size, prior strength), P(hypothesis | data)
 * It's all about uncertainty
 
 
-### Part 2: How do we do Bayesian data analysis (~10min)
+### Part 2: Why do Bayesian data analysis (~10min)
 
-* 2 major ways: (i) coding the model in a bayesian program (WinBUGS, JAGS, STAN) and use their R interface to fit the models (R2WinBUGS, R2JAGS, rstan), or (ii) use packages that allow you to fit the models based on R formula synthax and these packages will do the translation to the bayesian program (BayesianTools, MCMCglmm, rstanarm, brms).
-* About sampling (the blind man going through the likelihood landscape), what is MCMC, the Metropolis-Hasting vs Hamiltonian Monte Carlo (adv. and disadv.)
-* Vocabulary to know in BDA: chains, convergence, divergence, acceptance
-* Model checking in BDA ...
-
-### Part 3: Why do Bayesian data analysis (~10min)
+-> Bayes (probability) vs frequentise (repeat sampling), but also Bayes and frequentist (asymptotic convergence of the posterior to the likelihood under infinite sample size)
+-> Questions Bayes can answer that Freq cannot
+-> Flexible model building, uncertainty in all model parameters
+-> Include more information about the data
 
 * Embracing uncertainty
-* Flexibility in modle building
-* Getting what we are usually intersted by rather than some weird reference to null hypothesis
+* Flexibility in model building
+* Getting what we are usually intersted by rather than some weird reference to null hypothesis (We tend to interpret frequentist results p(data|hypothesis) with Bayesian thinking p(hypothesis|data) already anyway, so might as well use method that actually provides what we look for)
 * Fit complex models even with little data, varying weight of likelihood and prior as sample size increases
+* Give one or two published examples were supplementary insights from Bayesian approach are obvious (ideally scientific benefits/insights rather than simply "technical" benefits)
+
+### Part 3: How do we do Bayesian data analysis (~10min)
+
+-> The different options in R: BUGS, JAGS (r2jags,other packages allowing easy model fit with pre-set priors), STAN (rstan, rstanarm, brms)
+-> Specificitis of model building and checking in BDA (chains, convergence, divergence)
+-> The rest of the workshop
+
+* 2 major ways: (i) coding the model in a bayesian program (WinBUGS, JAGS, STAN) and use their R interface to fit the models (R2WinBUGS, R2JAGS, rstan), or (ii) use packages that allow you to fit the models based on R formula syntax and these packages will do the translation to the bayesian program (BayesianTools, MCMCglmm, rstanarm, brms).
+* About sampling (the blind man going through the likelihood landscape), what is MCMC, the Metropolis-Hasting vs Hamiltonian Monte Carlo (adv. and disadv.) (metaphors from the StatRethinking book really useful here)
+* Vocabulary to know in BDA: chains, convergence, divergence, acceptance
+* Model checking in BDA ...
 
 
 
