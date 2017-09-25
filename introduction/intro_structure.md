@@ -4,31 +4,13 @@
 
 Give a 30min intro into Bayesian data analysis using ecological examples when possible
 
-To organize:
-
-What are the different parts of the bayesian formula (post, likelihood, prior)
-How do we get prior informations? Is prior information important? 
-Effect of sample size on the likelihood vs prior importance
-Using and interpreting the posterior in Bayesian inference
-Some definition of classical stats, likelihood, MLE, p-values ...
-What is statistical inference? What information do we need from a model?
-How does Bayes and Frequentist differ (probability vs asymptotic approximation)
-How does Bayes analysis concretely work (MCMC sampling, issue of computing the integral, chains ...)
-Does the Bayes/Frequentist differences matter? When? Is one better than the other?
-Some examples of Bayesian use in ecology and what extra information they add compared to classical methods
-Some advatages of using Bayesian stats
-Some history to put things back into context, Bayes, Laplace, Fischer, Pearson
-Whta are the options to fit Bayesian models (BUGS, JAGS, STAN), what are the differences?
-
-Quotes from Hobbs and Hilborn: "There is a danger that questions are chosen for investigation by ecologists to fit widely sanctioned statistical methods rather than statistical methods being chosen to meet the needs of ecological questions"
-What is inference? How do we gather knowledge?
-
-What?
-
 
 ## Structure:
 
 ### Part 1: What is Bayesian data analysis (~10min)
+
+Quotes from Hobbs and Hilborn: "There is a danger that questions are chosen for investigation by ecologists to fit widely sanctioned statistical methods rather than statistical methods being chosen to meet the needs of ecological questions"
+What is inference? How do we gather knowledge? What is statistical inference? What information do we need from a model?
 
 -> About inference in science: we see the data and we would like to know something about the process that generated them.
 -> Posterior, likelihood and priors
@@ -36,12 +18,18 @@ What?
 -> Inference using Bayesian data analysis, called inverse modelling until Fischer came in in the XXth century
 -> the issue of sampling the posterior
 -> Example of BDA in ecology
+Using and interpreting the posterior in Bayesian inference
+Some definition of classical stats, likelihood, MLE, p-values ...
+
+How does Bayes and Frequentist differ (probability vs asymptotic approximation)
+How does Bayes analysis concretely work (MCMC sampling, issue of computing the integral, chains ...)
+Does the Bayes/Frequentist differences matter? When? Is one better than the other?
 
 In this part I'd like to outline:
 
 
 * Why do we do stats in general, about inference, big world-small world dichotomy from StatRethinking
-* The bayesian formula: Posterior info = Likelihood * prior info
+* The bayesian formula: Posterior info = Likelihood * prior info 
 * What is the likelihood, dnorm, show some brute-force, 2D examples (mean+sd)
 * What is prior infos, what kind of info do we generally have, how do we turn it into priors (in a way we always have __some__ prior info; uniform vs. weak priors)
 * What is posterior, combination of likelihood and prior infos, relative weight of each = f(sample size, prior strength), P(hypothesis | data)
@@ -62,6 +50,8 @@ In this part I'd like to outline:
 * Give one or two published examples were supplementary insights from Bayesian approach are obvious (ideally scientific benefits/insights rather than simply "technical" benefits)
 
 ### Part 3: How do we do Bayesian data analysis (~10min)
+
+What are the options to fit Bayesian models (BUGS, JAGS, STAN), what are the differences?
 
 -> The different options in R: BUGS, JAGS (r2jags,other packages allowing easy model fit with pre-set priors), STAN (rstan, rstanarm, brms)
 -> Specificitis of model building and checking in BDA (chains, convergence, divergence)
