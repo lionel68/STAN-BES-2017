@@ -9,15 +9,16 @@ Give a 30min intro into Bayesian data analysis using ecological examples when po
 
 ### Part 1: What is Bayesian data analysis (~10min)
 
-Quotes from Hobbs and Hilborn: "There is a danger that questions are chosen for investigation by ecologists to fit widely sanctioned statistical methods rather than statistical methods being chosen to meet the needs of ecological questions"
-What is inference? How do we gather knowledge? What is statistical inference? What information do we need from a model?
+Quote from Hobbs and Hilborn: "There is a danger that questions are chosen for investigation by ecologists to fit widely sanctioned statistical methods rather than statistical methods being chosen to meet the needs of ecological questions"
 
--> About inference in science: we see the data and we would like to know something about the process that generated them.
--> Posterior, likelihood and priors
+On inference:
+* What is inference? How do we gather knowledge? About inference in science: we see the data and we would like to know something about the process that generated them.
+* What is statistical inference? What information do we need from a model?
+* Why do we do stats in general, about inference, big world-small world dichotomy from StatRethinking
+
 -> A walkthrough example of a simple ABC computation following RB
 -> Inference using Bayesian data analysis, called inverse modelling until Fischer came in in the XXth century
 -> the issue of sampling the posterior
--> Example of BDA in ecology
 Using and interpreting the posterior in Bayesian inference
 Some definition of classical stats, likelihood, MLE, p-values ...
 
@@ -27,8 +28,6 @@ Does the Bayes/Frequentist differences matter? When? Is one better than the othe
 
 In this part I'd like to outline:
 
-
-* Why do we do stats in general, about inference, big world-small world dichotomy from StatRethinking
 * The bayesian formula: Posterior info = Likelihood * prior info 
 * What is the likelihood, dnorm, show some brute-force, 2D examples (mean+sd)
 * What is prior infos, what kind of info do we generally have, how do we turn it into priors (in a way we always have __some__ prior info; uniform vs. weak priors)
@@ -51,11 +50,7 @@ In this part I'd like to outline:
 
 ### Part 3: How do we do Bayesian data analysis (~10min)
 
-What are the options to fit Bayesian models (BUGS, JAGS, STAN), what are the differences?
-
--> The different options in R: BUGS, JAGS (r2jags,other packages allowing easy model fit with pre-set priors), STAN (rstan, rstanarm, brms)
--> Specificitis of model building and checking in BDA (chains, convergence, divergence)
--> The rest of the workshop
+What are the options to fit Bayesian models (commonly used languages: BUGS, JAGS, STAN), what are the differences?
 
 * 2 major ways: (i) coding the model in a bayesian program (WinBUGS, JAGS, STAN) and use their R interface to fit the models (R2WinBUGS, R2JAGS, rstan), or (ii) use packages that allow you to fit the models based on R formula syntax and these packages will do the translation to the bayesian program (BayesianTools, MCMCglmm, rstanarm, brms).
 * About sampling (the blind man going through the likelihood landscape), what is MCMC, the Metropolis-Hasting vs Hamiltonian Monte Carlo (adv. and disadv.) (metaphors from the StatRethinking book really useful here)
