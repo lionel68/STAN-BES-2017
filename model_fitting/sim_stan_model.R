@@ -1,3 +1,11 @@
+##Note: for me, we have too many examples in this part
+##I'd focus on 4 examples at most (LM, GLM poisson or binomial, mixed-effects model with varying intercepts only, 
+#and one more complex where the usefulness of Bayesian is obvious
+
+#if we show details for all 4, compare to Freq approach at low and realistic sample sizes, 
+#and provide for some syntax in rstan/brms/stanarm for comparison (while focusing on only one obviously)
+#it will last easily 1/2 h
+
 # Library of working STAN models checked with simulated data
 #check with rstanarm and brms
 #load packages
