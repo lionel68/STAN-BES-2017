@@ -141,12 +141,12 @@ mcmc_areas(as.mcmc(nb_brms),regex_pars="b")
 pred <- expand.grid(X1=seq(-2,2,0.1),X2=c(-2,0,2))
 #turn this into a model matrix for easier computation
 modpred <- model.matrix(~X1*X2, pred)
-#MCMC linear prediction
-est <- apply(nb_mcmc_m[,1:4],1,function(x) modpred %*% x)
+#MCMC linear prediction with a log-link
+est <- apply(nb_mcmc_m[,1:4],1,function(x) exp(modpred %*% x))
 #CrI of the linear predictor/ expected values
-pred$LCI <- exp(apply(est,1,quantile,probs=0.025))
-pred$Med <- exp(apply(est,1,quantile,probs=0.5))
-pred$UCI <- exp(apply(est,1,quantile,probs=0.975))
+pred$LCI <- apply(est,1,quantile,probs=0.025)
+pred$Med <- apply(est,1,quantile,probs=0.5)
+pred$UCI <- apply(est,1,quantile,probs=0.975)
 #a plot
 ggplot(dat,aes(x=X1,y=y,group=X2))+geom_point()+
   geom_line(data=pred,aes(y=LCI,color=factor(X2)),linetype="dashed")+
@@ -179,6 +179,7 @@ pp_check(hier_brms,type = "stat_2d")
 #looks good
 ## Do model inference
 #look at shrinkage effects
+
 #TODO !!!!
 
 #summaries of parameters
@@ -206,3 +207,83 @@ ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),alpha=0.2,color="grey")+
   geom_ribbon(data=pred,aes(y=Medg,ymin=LCIg,ymax=UCIg),alpha=0.2,color="grey70")
 
+#some hypothesis testing
+
+
+############ Zero-inflated overdispersed poisson model #############
+
+### simulate some data
+dat <- data.frame(X1=runif(100,-2,2))
+modmat <- model.matrix(~X1+I(X1^2),dat)
+p_i <- rbinom(n = 100,size = 1,prob=0.7)
+e_i <- rnorm(100,0,0.33)
+lbd_i <- exp(modmat %*% c(2,0.5,-0.4) +e_i)
+dat$N <- rpois(100,lbd_i * p_i)
+
+### a first naive poisson model
+poi_brm <- brm(N ~ X1 + I(X1^2),dat,family=poisson)
+#get the MCMC
+poi_mcmc <- as.matrix(poi_brm)
+### Check the model
+#convergence checks with traceplot, Rhat and effective sample size
+mcmc_trace(as.mcmc(poi_brm))
+rhat(poi_brm)
+neff_ratio(poi_brm)
+#posterior predictive check
+pp_check(poi_brm,type = "dens_overlay",nsamples=100)
+pp_check(poi_brm,type = "stat_2d")
+#some issue there
+#count how many 0s there is vs number of zeros predicted
+ppp <- apply(poi_mcmc,1,function(x) rpois(100,exp(modmat%*%x[1:3])))
+obs_0 <- sum(dat$N==0)
+hist(apply(ppp==0,2,sum),xlim=c(0,obs_0 + 5))
+abline(v=obs_0,col="orange",lwd=2)
+#look at the QRS
+QRS <- sapply(1:100,function(i) mean(ppp[i,] +runif(4000,-0.5,0.5) > dat$N[i]))
+hist(QRS,freq=FALSE,col="grey")
+abline(h=1,col="blue",lty=2,lwd=2)
+#evidence for both zero-inflation and overdispersion
+
+### a second zero inflated overdispersed poisson model
+dat$ID <- 1:nrow(dat)
+zib_brm <- brm(N ~ X1 + I(X1^2) + (1 | ID), dat, family = zero_inflated_poisson)
+zib_mcmc <- as.matrix(zib_brm)
+### Check the model
+#convergence checks with traceplot, Rhat and effective sample size
+mcmc_trace(as.mcmc(zib_brm),regex_pars="b|sd|zi")
+#posterior predictive check
+pp_check(zib_brm,type = "dens_overlay",nsamples=100)
+pp_check(zib_brm,type = "stat_2d")
+#compute the ppp for 0s and QRS check
+ppp <- apply(zib_mcmc,1,function(x){
+  lbd <- exp(modmat %*% x[1:3] + rnorm(1,0,x[4]))
+  ps <- rbinom(100,1,1-x[5])
+  return(rpois(100,lbd*ps))
+})
+obs_0 <- sum(dat$N==0)
+hist(apply(ppp==0,2,sum))
+abline(v=obs_0,col="orange",lwd=2)
+#look at the QRS
+QRS <- sapply(1:100,function(i) mean(ppp[i,] +runif(4000,-0.5,0.5) > dat$N[i]))
+hist(QRS,freq=FALSE,col="grey")
+abline(h=1,col="blue",lty=2,lwd=2)
+
+#look at predicted regression with credible and predicted intervals
+pred <- data.frame(X1=seq(-2,2,0.1))
+modpred <- model.matrix(~X1+I(X1^2),pred)
+reg_pred <- apply(zib_mcmc,1,function(x) exp(modpred %*% x[1:3] +rnorm(1,0,x[4])))
+reg_ci <- apply(reg_pred,1,quantile,probs=c(0.05,0.5,0.95))
+pred$LCI <- reg_ci[1,]
+pred$Med <- reg_ci[2,]
+pred$UCI <- reg_ci[3,]
+pred_pred <- sapply(1:4000,function(i) rpois(41,reg_pred[,i] * rbinom(n = 1,size = 1,prob=1-zib_mcmc[i,5])))
+pred_ci <- apply(pred_pred,1,quantile,probs=c(0.05,0.5,0.95))
+pred$LCI_pred <- pred_ci[1,]
+pred$Med_pred <- pred_ci[2,]
+pred$UCI_pred <- pred_ci[3,]
+
+ggplot(dat,aes(x=X1,y=N))+geom_point()+
+  geom_line(data=pred,aes(y=Med))+
+  geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),color="grey30",alpha=0.5)+
+  geom_ribbon(data=pred,aes(y=Med,ymin=LCI_pred,ymax=UCI_pred),color="grey10",alpha=0.2)+
+  labs(x="Environmental gradient",y="Counts")

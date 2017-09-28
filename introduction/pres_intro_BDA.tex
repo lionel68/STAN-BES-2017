@@ -101,31 +101,49 @@
   \begin{frame}
   \frametitle{\bf Big world / small world}
   
-  Our models have limited scope and only give answers within their area of expertise, models will tend to give the best answers within their limited scope
-  
-  
- \end{frame}
- 
-  \begin{frame}
-  \frametitle{\bf Bayesian data analysis in one formula}
-  
-  P (hypothesis given data) is prop to P(data given hypothesis) * P(hypothesis) or
-  Posterior  is prop to Likelihood * Prior
-  Updated belief = current evidence * prior belief
+  Our models have limited scope and only give answers within their area of expertise, models will tend to give the best answers within their limited scope  
   
  \end{frame}
  
-  \begin{frame}
-  \frametitle{\bf What is Likelihood}
+ \begin{frame}
+  \frametitle{\bf Bayesian can't walk on water}
   
-  P(Data | Parameter), based on some probability distribution we get the probability of observing the data for specific parameter values
-  some ecological examples: length/height of some animals
-  
-  Maximum likelihood extimate (minimize the sum of log-likelihoods), this is what we get in classical analysis
+  Bayesian approach cannot solve experimental design issue, N=2 want to find effect of competition ...
   
  \end{frame}
  
-  \begin{frame}
+ \begin{frame}
+  \frametitle{\bf There is NO bayesian model}
+  
+  Bayesian data analaysis uses the same models as developed in classical stats
+  
+ \end{frame}
+ 
+ \begin{frame}
+  \frametitle{\bf The Likelihood: what we've been doing all of our lifes}
+  
+  Prob of the data knowing the parameters, what is hidden behind the (G)LM(M) motor
+  
+  Some plot of what this means  
+  
+  Good news is: we do not need to learn new models
+  
+ \end{frame}
+ 
+ \begin{frame}
+  \frametitle{\bf Where BDA starts}
+  
+  Posterior \propto Likelihood * Prior
+  
+  Or:
+  
+  New knowledge \propto Current evidence * prior knowledge
+  
+  Some graphical example of this
+  
+ \end{frame}
+
+   \begin{frame}
   \frametitle{\bf What is prior infos}
   
   This is something new, prior is also a probability distribution that represent our beliefs of the likely values of the parameters
@@ -142,19 +160,17 @@
   sample size grows the likelihood gets more and more weights, a simple example (maybe a shiny app ...)
   
   
- \end{frame}
  
-  \begin{frame}
-  \frametitle{\bf It's all about uncertainty}
-  
-  One of the great advantage of BDA is that everything is uncertain, we get posterior \emph{distribution} for all parameters in the models so we know
-  the uncertainty associated with all parameters in the model. Moreover we can interprete the posterior distribution as probability statement and
-  can therefore more easily interprete the model outcome. Questions like: what is the probability that Group A as larger means than group B, or what is the 
-  probability that the variation in individual A response is larger than the average variation are straightforward to answer.
-  
- \end{frame}
  
-  
+\begin{frame}
+ \frametitle{\bf The key aspects of BDA}
+ 
+ Explicitely integrate prior knowledge 
+ Output probability for the parameters/hypothesis, posterior
+ Uncertainty is everywhere
+ 
+\end{frame}
+
 \section{How?}
 
  \begin{frame}
@@ -176,25 +192,28 @@
   Blind man in the likelihood landscape, how do we effectively sample it
   
  \end{frame}
+ 
+ \begin{frame}
+  \frametitle{\bf About MCMC}
+  
+  Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
+  
+ \end{frame}
+
 
   \begin{frame}
-  \frametitle{\bf The sampling in BUGS and JAGS}
+  \frametitle{\bf Different samplers}
   
-  Metropolis-Hasting sampling, adv. and dis.
-  
- \end{frame}
- 
-  \begin{frame}
-  \frametitle{\bf The sampling in STAN}
-  
-  Hamiltonian Monte Carlo, adv. and dis.
+  JAGS: Adaptively tries to find the best sampler corresponding to your model
+  STAN: Use Hamiltonian Monte Carlo (see Monnahan et al 2017 MEE)
   
  \end{frame}
  
+   
   \begin{frame}
-  \frametitle{\bf Elements of bayesian vocabulary}
+  \frametitle{\bf Elements of Bayesian vocabulary}
   
-  Chains, convergence, divergence, Rhat, n\_eff, tree depth
+  Chains, convergence, divergence, Rhat, n\_eff
   
  \end{frame}
  
@@ -206,9 +225,9 @@
  \end{frame}
  
   \begin{frame}
-  \frametitle{\bf Model comparison}
+  \frametitle{\bf Model comparison/selection}
   
-  LOOC, WAIC ...
+  LOOC, WAIC
   
  \end{frame}
  
