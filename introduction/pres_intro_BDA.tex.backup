@@ -111,7 +111,6 @@
   
   P (hypothesis given data) is prop to P(data given hypothesis) * P(hypothesis) or
   Posterior  is prop to Likelihood * Prior
-  Updated belief = current evidence * prior belief
   
  \end{frame}
  
@@ -165,8 +164,7 @@
   Knowing this we have the full flexibility to fit any model we want but we also have the full possibility that we make coding/interpretation
   errors that are not visible.
   There are a couple of R packages to transcribe the standard R formula synthax into STAN models: rstanarm and brms. With this option we are sure that the model
-  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developped have
-  implemented. 
+  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. 
   
  \end{frame}
 
