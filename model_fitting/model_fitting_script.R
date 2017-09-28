@@ -3,6 +3,13 @@
 # with models of increasing complexities
 ###############################
 
+############# Outline #########
+
+# Four models will be explored:
+# Linear model (gaussian regression)
+# Generalized linear model with overdispersion 
+# Generalized Linear Mixed effect model (with gaussian regression)
+# Zero-inflated overdispersed generalized linear model
 
 ############### Load libraries ############
 library(rstan)
