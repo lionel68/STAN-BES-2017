@@ -90,7 +90,7 @@
   
   Some elements of inference, how does it fits into the science workflow
   
-  Scientists are intersted with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
+  Scientists are interested with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
   Data are then assembled/collected and one wants to extract the big world signal in the data, statistical inference provide this bridge between complex data and
   theories. 
   
@@ -108,9 +108,13 @@
  \begin{frame}
   \frametitle{\bf Bayesians can't walk on water}
   
+<<<<<<< HEAD
  \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{water.jpg}
  
  Except maybe shallow water
+=======
+  Bayesian approach cannot solve experimental design issue, e.g. wanting to find effect of competition with N=2 ...
+>>>>>>> b7c91fceb064dc1833fea4c4786c72d64aeb7a5a
   
  \end{frame}
  
@@ -123,15 +127,17 @@
 
  
   
+
    \note{Bayesian data analaysis uses the same models as developed in classical stats,
    so there is no hierarchical bayesian models, but rather hierarchical models fit using a
    bayesian framework, this is pretty conforting as this means that we can continue fitting the same
    model we've been using except this time with all advantages confered by bayesian data analysis.}
+
   
  \end{frame}
  
  \begin{frame}
-  \frametitle{\bf The Likelihood: what we've been doing all of our lifes}
+  \frametitle{\bf The Likelihood: what we've been doing all of our lives}
   
  \[
   lm(y \sim x1 + x2, data)
@@ -193,6 +199,8 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   This is something new, prior is also a probability distribution that represent our beliefs of the likely values of the parameters
   This is the information that is around in the literature or in the community before doing an analysis
   Example: want to explore plant growth or whatever with a meta-analysis
+  And/or information based on the nature of the parameter
+  Example: a time parameter will likely be >= 0
   
  \end{frame}
  
@@ -202,14 +210,17 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   The posterior is also a probability distribution, it quantifies the probability of parameter values knowing the data (the likelihood) and our expectation (prior)
   The impact of the data vs the expectation depends on the sample size, with low sample size the prior is relatively more important (little information in the data), as
   sample size grows the likelihood gets more and more weights, a simple example (maybe a shiny app ...)
+  % I like the idea of the shiny app, maybe using a simple example like the prop water/land in the StatRethinking book?
   
   \end{frame}
+
+
  
  
 \begin{frame}
  \frametitle{\bf The key aspects of BDA}
  
- Explicitely integrate prior knowledge 
+ Explicitly integrate prior knowledge 
  Output probability for the parameters/hypothesis, posterior
  Uncertainty is everywhere
  Think of models as data-generating processes
@@ -226,7 +237,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   Knowing this we have the full flexibility to fit any model we want but we also have the full possibility that we make coding/interpretation
   errors that are not visible.
   There are a couple of R packages to transcribe the standard R formula synthax into STAN models: rstanarm and brms. With this option we are sure that the model
-  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developped have
+  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developers have
   implemented. 
   
  \end{frame}
@@ -298,7 +309,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \begin{frame}
   \frametitle{\bf Why do we do stats?}
   
-  Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to som null hypothesis in
+  Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
   terms of frequency
   
  \end{frame}
@@ -319,4 +330,10 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
  
 \end{document}
+
+
+ \begin{frame}
+  \frametitle{\bf }
+  
+ \end{frame}
 
