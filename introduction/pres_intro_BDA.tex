@@ -90,7 +90,7 @@
   
   Some elements of inference, how does it fits into the science workflow
   
-  Scientists are intersted with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
+  Scientists are interested with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
   Data are then assembled/collected and one wants to extract the big world signal in the data, statistical inference provide this bridge between complex data and
   theories. 
   
@@ -108,19 +108,19 @@
  \begin{frame}
   \frametitle{\bf Bayesian can't walk on water}
   
-  Bayesian approach cannot solve experimental design issue, N=2 want to find effect of competition ...
+  Bayesian approach cannot solve experimental design issue, e.g. wanting to find effect of competition with N=2 ...
   
  \end{frame}
  
  \begin{frame}
   \frametitle{\bf There is NO bayesian model}
   
-  Bayesian data analaysis uses the same models as developed in classical stats
+  Bayesian data analysis uses the same models as developed in classical stats
   
  \end{frame}
  
  \begin{frame}
-  \frametitle{\bf The Likelihood: what we've been doing all of our lifes}
+  \frametitle{\bf The Likelihood: what we've been doing all of our lives}
   
   Prob of the data knowing the parameters, what is hidden behind the (G)LM(M) motor
   
@@ -149,6 +149,8 @@
   This is something new, prior is also a probability distribution that represent our beliefs of the likely values of the parameters
   This is the information that is around in the literature or in the community before doing an analysis
   Example: want to explore plant growth or whatever with a meta-analysis
+  And/or information based on the nature of the parameter
+  Example: a time parameter will likely be >= 0
   
  \end{frame}
  
@@ -157,15 +159,15 @@
   
   The posterior is also a probability distribution, it quantifies the probability of parameter values knowing the data (the likelihood) and our expectation (prior)
   The impact of the data vs the expectation depends on the sample size, with low sample size the prior is relatively more important (little information in the data), as
-  sample size grows the likelihood gets more and more weights, a simple example (maybe a shiny app ...)
-  
+  sample size grows the likelihood gets more and more weight, a simple example (maybe a shiny app ...)
+  % I like the idea of the shiny app, maybe using a simple example like the prop water/land in the StatRethinking book?
   
  
  
 \begin{frame}
  \frametitle{\bf The key aspects of BDA}
  
- Explicitely integrate prior knowledge 
+ Explicitly integrate prior knowledge 
  Output probability for the parameters/hypothesis, posterior
  Uncertainty is everywhere
  
@@ -181,7 +183,7 @@
   Knowing this we have the full flexibility to fit any model we want but we also have the full possibility that we make coding/interpretation
   errors that are not visible.
   There are a couple of R packages to transcribe the standard R formula synthax into STAN models: rstanarm and brms. With this option we are sure that the model
-  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developped have
+  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developers have
   implemented. 
   
  \end{frame}
@@ -253,7 +255,7 @@
   \begin{frame}
   \frametitle{\bf Why do we do stats?}
   
-  Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to som null hypothesis in
+  Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
   terms of frequency
   
  \end{frame}
