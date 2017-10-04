@@ -1,7 +1,5 @@
-################################
-# Session on model fitting
-# with models of increasing complexities
-###############################
+############## An introduction to BDA using STAN ##################
+
 
 ############# Outline #########
 
@@ -16,11 +14,12 @@ library(rstan)
 library(bayesplot)
 library(brms)
 library(ggplot2)
+library(reshape2)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 ############## Linear model ###########
-
+set.seed(20170927)
 ## Simulate some data
 dat <- data.frame(X1 = runif(100,-2,2),F1 = gl(n = 2,k = 50))
 modmat <- model.matrix(~X1*F1,dat)
@@ -29,10 +28,9 @@ dat$y <- rnorm(100,modmat %*% betas, 1)
 
 ## Fit the model
 lin_brms <- brm(y ~ X1 * F1, dat)
+#in rstanarm you could use: stan_lm(y~X1*F1,dat)
 #get the MCMC samples
-lin_mcmc <- as.mcmc(lin_brms)
-#put it into a standard matrix
-lin_mcmc_m <- as.matrix(lin_mcmc) #to test
+lin_mcmc <- as.matrix(lin_brms) #to test
 
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
@@ -53,7 +51,7 @@ pred <- expand.grid(X1=seq(-2,2,0.1),F1=factor(1:2))
 #turn this into a model matrix for easier computation
 modpred <- model.matrix(~X1*F1, pred)
 #MCMC linear prediction
-est <- apply(lin_mcmc_m[,1:4],1,function(x) modpred %*% x)
+est <- apply(lin_mcmc[,1:4],1,function(x) modpred %*% x)
 #CrI of the linear predictor/ expected values
 pred$LCI <- apply(est,1,quantile,probs=0.025)
 pred$Med <- apply(est,1,quantile,probs=0.5)
@@ -65,16 +63,16 @@ ggplot(dat,aes(x=X1,y=y,color=F1))+geom_point()+
   geom_line(data=pred,aes(y=Med))
 
 #another way of looking at this is too sample 100 MCMC values for
-#all parameters and ocmpute the regression lines
+#all parameters and compute the regression lines
 rnd_mcmc <- sample(1:4000,100,replace=FALSE)
-predd <- adply(lin_mcmc_m[rnd_mcmc,],1,function(x) modpred%*%x[1:4])
+predd <- adply(lin_mcmc[rnd_mcmc,],1,function(x) modpred%*%x[1:4])
 predd <- cbind(predd,pred) #some R magic in the background
 names(predd)[1:2] <- c("MCMC_id","predict")
 ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
   geom_point(data=dat,aes(x=X1,y=y))
 
 #posterior predictive distribution for each data points
-predI <- apply(lin_mcmc_m[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
+predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
 predD <- melt(predI)
 
 ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
@@ -83,9 +81,9 @@ ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
 
 #testing hypothesis
 #for instance the hypothesis that the effect of F1 is stronger than the effect of X1
-sum(abs(lin_mcmc_m[,"F12"]) > abs(lin_mcmc_m[,"X1"])) / dim(lin_mcmc_m)[1]
+sum(abs(lin_mcmc[,"b_F12"]) > abs(lin_mcmc[,"b_X1"])) / dim(lin_mcmc)[1]
 #the probability that observations in group 1 are bigger than obsevations in group 2
-sum(lin_mcmc_m[,1] > (lin_mcmc_m[,1] + lin_mcmc_m[,"F12"])) / dim(lin_mcmc_m)[1]
+sum(lin_mcmc_m[,1] > (lin_mcmc_m[,1] + lin_mcmc_m[,"b_F12"])) / dim(lin_mcmc_m)[1]
 
 
 ############# Generalized linear model ############
@@ -93,11 +91,12 @@ sum(lin_mcmc_m[,1] > (lin_mcmc_m[,1] + lin_mcmc_m[,"F12"])) / dim(lin_mcmc_m)[1]
 ##### Simulate some overdispersed poisson data
 dat <- data.frame(X1=runif(100,-2,2),X2=runif(100,-2,2))
 modmat <- model.matrix(~X1*X2,dat)
-betas <- c(2,runif(dim(modmat)[2]-1,-0.75,0.75))
+betas <- c(2,0.1,-0.05,-0.15)
 dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 
-### Fit the model
+### Fit the model, a standard poisson regression with no variation parameters
 poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
+#in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
 
 #get the MCMC samples
 poi_mcmc <- as.matrix(poi_brms)
@@ -121,6 +120,7 @@ abline(h=1,col="blue",lty=2,lwd=2) #clear indication for underdispersion in the 
 
 ### Use overdispersed poisson
 nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
+#in rstanarm: stan_glm.nb(y~X1*X2,dat)
 
 #get the MCMC samples
 nb_mcmc <- as.matrix(nb_brms)
@@ -149,7 +149,7 @@ pred <- expand.grid(X1=seq(-2,2,0.1),X2=c(-2,0,2))
 #turn this into a model matrix for easier computation
 modpred <- model.matrix(~X1*X2, pred)
 #MCMC linear prediction with a log-link
-est <- apply(nb_mcmc_m[,1:4],1,function(x) exp(modpred %*% x))
+est <- apply(nb_mcmc[,1:4],1,function(x) exp(modpred %*% x))
 #CrI of the linear predictor/ expected values
 pred$LCI <- apply(est,1,quantile,probs=0.025)
 pred$Med <- apply(est,1,quantile,probs=0.5)
@@ -172,12 +172,13 @@ ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+stat_smooth(method="lm",se=FA
 
 ### fit the model
 hier_brms <- brm(y ~ X1 + (X1 | Group),dat)
+#in rstanarm: stan_lmer(y~X1+(X1|Group),dat)
 #get MCMC samples
 hier_mcmc <- as.matrix(hier_brms)
 
 ### Check the model
 #convergence checks with traceplot, Rhat and effective sample size
-mcmc_trace(as.mcmc(hier_brms))
+mcmc_trace(as.mcmc(hier_brms),regex_pars = "b|sd|sigma")
 rhat(hier_brms)
 neff_ratio(hier_brms)
 #posterior predictive check
@@ -215,6 +216,8 @@ ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+
   geom_ribbon(data=pred,aes(y=Medg,ymin=LCIg,ymax=UCIg),alpha=0.2,color="grey70")
 
 #some hypothesis testing
+#probability that variation in intercept is higher than variation in slopes
+sum(hier_mcmc[,4] > hier_mcmc[,5]) / 4000
 
 
 ############ Zero-inflated overdispersed poisson model #############
@@ -229,6 +232,7 @@ dat$N <- rpois(100,lbd_i * p_i)
 
 ### a first naive poisson model
 poi_brm <- brm(N ~ X1 + I(X1^2),dat,family=poisson)
+#in rstanarm: stan_glm(N~X1+I(X^2),dat,family=poisson)
 #get the MCMC
 poi_mcmc <- as.matrix(poi_brm)
 ### Check the model
@@ -254,6 +258,7 @@ abline(h=1,col="blue",lty=2,lwd=2)
 ### a second zero inflated overdispersed poisson model
 dat$ID <- 1:nrow(dat)
 zib_brm <- brm(N ~ X1 + I(X1^2) + (1 | ID), dat, family = zero_inflated_poisson)
+#no option (yet) in rstanarm but relatively easy to code in STAN or JAGS
 zib_mcmc <- as.matrix(zib_brm)
 ### Check the model
 #convergence checks with traceplot, Rhat and effective sample size

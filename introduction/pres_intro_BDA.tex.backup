@@ -148,7 +148,7 @@
     \mu_i = a + b_1 * x1 + b_2 * x2
    \]
 
-Which is called the \textsc{likelihood}, the probability of the data given the model. 
+Which is called the \textsc{likelihood}, the probability of the data given the model
    
   
   \note{Prob of the data knowing the parameters, what is hidden behind the (G)LM(M) motor
@@ -158,21 +158,6 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   Good news is: we do not need to learn new models}
   
  \end{frame}
- 
- \begin{frame}
-  \frametitle{The likelihood: a graphical example}
-  
-  \includegraphics[width=\textwidth,height=.75\textheight,keepaspectratio]{likelihood.png}
-  
-  \[
-   y \sim \mathcal{B}(n = 10,size = 1,prob = 0.5)
-  \]
-  
-  \note{critical part of modelling: as long as we can write down the likelihood of our model we have great freedom}
-
-  
- \end{frame}
-
  
  \begin{frame}
   \frametitle{\bf Where BDA starts}
