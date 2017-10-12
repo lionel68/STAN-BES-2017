@@ -16,7 +16,7 @@ library(brms)
 library(ggplot2)
 library(reshape2)
 rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+options(mc.cores = parallel::detectCores()) #this allows STAN to run chains on parallel cores
 
 ############## Linear model ###########
 set.seed(20170927)
@@ -28,10 +28,14 @@ dat$y <- rnorm(100,modmat %*% betas, 1)
 
 ## Fit the model
 lin_brms <- brm(y ~ X1 * F1, dat)
+
 #in rstanarm you could use: stan_lm(y~X1*F1,dat)
-#for the pure stan code check: normal_model_basic.stan
+
+#you can look at the underlying STAN code using stancode(lin_brms)
+#for the pure stan code check: 
 #lin_stan <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_basic.stan',
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
+
 #get the MCMC samples
 lin_mcmc <- as.matrix(lin_brms) #to test
 
@@ -68,7 +72,7 @@ ggplot(dat,aes(x=X1,y=y,color=F1))+geom_point()+
 #another way of looking at this is too sample 100 MCMC values for
 #all parameters and compute the regression lines
 rnd_mcmc <- sample(1:4000,100,replace=FALSE)
-predd <- adply(lin_mcmc[rnd_mcmc,],1,function(x) modpred%*%x[1:4])
+predd <- apply(lin_mcmc[rnd_mcmc,],1,function(x) modpred%*%x[1:4])
 predd <- cbind(predd,pred) #some R magic in the background
 names(predd)[1:2] <- c("MCMC_id","predict")
 ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
@@ -78,6 +82,7 @@ ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
 predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
 predD <- melt(predI)
 
+#[Maxime]plot below doesn't work as there is no Var2 in predD
 ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
   geom_point(data=dat,aes(x=1:100,y=y),color="red",size=3)+
   labs(x="Row index",y="Y value")
@@ -85,7 +90,8 @@ ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
 #testing hypothesis
 #for instance the hypothesis that the effect of F1 is stronger than the effect of X1
 sum(abs(lin_mcmc[,"b_F12"]) > abs(lin_mcmc[,"b_X1"])) / dim(lin_mcmc)[1]
-#the probability that observations in group 1 are bigger than obsevations in group 2
+#the probability that observations in group 1 are bigger than observations in group 2
+#[Maxime] doesn't work, no object named "lin_mcmc_m"
 sum(lin_mcmc_m[,1] > (lin_mcmc_m[,1] + lin_mcmc_m[,"b_F12"])) / dim(lin_mcmc_m)[1]
 
 
@@ -100,7 +106,9 @@ dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 ### Fit the model, a standard poisson regression with no variation parameters
 poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
 #in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
-#pure stan code is available under: poisson_model_basic.stan
+#you can again look at the underlying STAN code using stancode(poi_brms)
+#or pure stan code is available under: poisson_model_basic.stan
+
 
 #get the MCMC samples
 poi_mcmc <- as.matrix(poi_brms)
@@ -185,7 +193,7 @@ hier_brms <- brm(y ~ X1 + (X1 | Group),dat)
 #                 data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
 #the non-centered approach still does not work
 
-a#and normal_model_allvarying_noncent.stan
+#and normal_model_allvarying_noncent.stan
 
 #get MCMC samples
 hier_mcmc <- as.matrix(hier_brms)
@@ -218,6 +226,7 @@ pred <- data.frame(X1=pred$X1,LCI=condint[1,],Med=condint[2,],UCI=condint[3,],Gr
 ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+
   geom_line(data=pred,aes(y=Med),color="black")+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),alpha=0.2,color="grey")
+                  #[Maxime]geom_ribbon is giving warnings that it ignores argument y=, here and below
 
 #include group-level uncertainty, so conditional on groups
 predgroup <- apply(hier_mcmc,1,function(x) rnorm(1,x[1],x[3]) + rnorm(1,x[2],x[4]) * pred$X1)
