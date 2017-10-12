@@ -1,13 +1,13 @@
 /*
-Standard intercept only hierarchical model with normal regression for
-any number of predictor variables
+Hierarchical linear model with normal regression for
+any number of predictor variables, all varying according to one grouping level
 with weakly informative priors on the betas and on the standard deviation
 using a non-centered re-parametrization
 */
 data{
 	int<lower=1> N; //number of observations
 	int<lower=1> K; //number of predictor variables NOT including the intercept
-	matrix[N,K] X; //the model matrix NOT including intercept
+	matrix[N,K] X; //the model matrix including the intercept
 	int<lower=1> N_group;//number of group for the varying intercept
 	int<lower=1,upper=N_group> ID_group[N];//index variable for group ID
 	vector[N] y; //the response variable
