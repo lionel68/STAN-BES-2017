@@ -1,5 +1,5 @@
 ############## An introduction to BDA using STAN ##################
-
+#TO DO: make the relevant .stan code for each 4 models
 
 ############# Outline #########
 
@@ -29,6 +29,9 @@ dat$y <- rnorm(100,modmat %*% betas, 1)
 ## Fit the model
 lin_brms <- brm(y ~ X1 * F1, dat)
 #in rstanarm you could use: stan_lm(y~X1*F1,dat)
+#for the pure stan code check: normal_model_basic.stan
+#lin_stan <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_basic.stan',
+#                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 #get the MCMC samples
 lin_mcmc <- as.matrix(lin_brms) #to test
 
@@ -97,6 +100,7 @@ dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 ### Fit the model, a standard poisson regression with no variation parameters
 poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
 #in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
+#pure stan code is available under: poisson_model_basic.stan
 
 #get the MCMC samples
 poi_mcmc <- as.matrix(poi_brms)
@@ -121,6 +125,7 @@ abline(h=1,col="blue",lty=2,lwd=2) #clear indication for underdispersion in the 
 ### Use overdispersed poisson
 nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
 #in rstanarm: stan_glm.nb(y~X1*X2,dat)
+#the pure stan code is available under: neg_binomial_basic.stan
 
 #get the MCMC samples
 nb_mcmc <- as.matrix(nb_brms)
@@ -173,6 +178,15 @@ ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+stat_smooth(method="lm",se=FA
 ### fit the model
 hier_brms <- brm(y ~ X1 + (X1 | Group),dat)
 #in rstanarm: stan_lmer(y~X1+(X1|Group),dat)
+#pure stan code available in two versions: normal_model_allvarying_cent.stan
+#hier <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_allvarying_cent.stan',
+#             data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
+#hier_non <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_allvarying_noncent.stan',
+#                 data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
+#the non-centered approach still does not work
+
+a#and normal_model_allvarying_noncent.stan
+
 #get MCMC samples
 hier_mcmc <- as.matrix(hier_brms)
 
@@ -233,6 +247,7 @@ dat$N <- rpois(100,lbd_i * p_i)
 ### a first naive poisson model
 poi_brm <- brm(N ~ X1 + I(X1^2),dat,family=poisson)
 #in rstanarm: stan_glm(N~X1+I(X^2),dat,family=poisson)
+
 #get the MCMC
 poi_mcmc <- as.matrix(poi_brm)
 ### Check the model
@@ -259,6 +274,8 @@ abline(h=1,col="blue",lty=2,lwd=2)
 dat$ID <- 1:nrow(dat)
 zib_brm <- brm(N ~ X1 + I(X1^2) + (1 | ID), dat, family = zero_inflated_poisson)
 #no option (yet) in rstanarm but relatively easy to code in STAN or JAGS
+#TODO: make the STAN code for this one
+
 zib_mcmc <- as.matrix(zib_brm)
 ### Check the model
 #convergence checks with traceplot, Rhat and effective sample size

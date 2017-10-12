@@ -1,5 +1,5 @@
 /*
-Standard intercept only hierarchical model withnormal regression for
+Standard intercept only hierarchical model with normal regression for
 any number of predictor variables
 with weakly informative priors on the betas and on the standard deviation
 using a non-centered re-parametrization
