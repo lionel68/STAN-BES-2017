@@ -18,6 +18,10 @@ library(reshape2)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()) #this allows STAN to run chains on parallel cores
 
+############## Set working directory #########
+
+setwd("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/")
+
 ############## Linear model ###########
 set.seed(20170927)
 ## Simulate some data
@@ -33,8 +37,8 @@ lin_brms <- brm(y ~ X1 * F1, dat)
 
 #you can look at the underlying STAN code using stancode(lin_brms)
 #for the pure stan code check: 
-#lin_stan <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_basic.stan',
-#                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
+lin_stan <- stan(file = 'model_fitting/Models/normal_model_basic.stan',
+                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 #get the MCMC samples
 lin_mcmc <- as.matrix(lin_brms) #to test
@@ -325,3 +329,120 @@ ggplot(dat,aes(x=X1,y=N))+geom_point()+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),color="grey30",alpha=0.5)+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI_pred,ymax=UCI_pred),color="grey10",alpha=0.2)+
   labs(x="Environmental gradient",y="Counts")
+
+#try out to make prior, likelihood and posterior distribution from
+#a binomial problem
+compute_dist <- function(n=10,shape1=2,shape2=2){
+  set.seed(20171023)
+  #values of parameter p to try out
+  p_vals <- seq(0,1,length=100)
+  #the prior distribution
+  prior <- dbeta(p_vals,shape1 = shape1, shape2 = shape2)
+  #did the finger point on earth?
+  is_earth <- rbinom(n=1,size=n,prob=0.3)
+  #compute the likelihood of the different parameter p values
+  lik <- sapply(1:100,function(x) dbinom(is_earth,size = n,prob=p_vals[x]))
+  #compute the posterior distribution, making use of the conjugate prior
+  post <- dbeta(p_vals,shape1 = shape1 + sum(is_earth),shape2 = shape2 + n - sum(is_earth))
+  #std
+  #post <- post / sum(post)
+  #the output of the function
+  out <- data.frame(n=n,p_vals=p_vals,prior=prior,lik=lik,post=post)
+  #std for easier plotting
+  out$prior <- with(out,(prior - min(prior))/(max(prior)-min(prior)))
+  out$lik <- with(out,(lik - min(lik))/(max(lik)-min(lik)))
+  out$post <- with(out,(post - min(post))/(max(post)-min(post)))
+  par(mar=c(5,5,4,0))
+  plot(post~p_vals,out,type="l",col="orange",lwd=4,xlab="Values of parameter p, proportion of earth on Earth",ylab="Density (standardized)",
+       main=paste0("Density distribution for a sample size of: ",n[1],"\nand shape1: ",shape1," shape2: ",shape2),
+       ylim=c(0,1.5),cex.lab=2,cex.main=2)
+  lines(out$p_vals,out$prior,col="darkgreen",lwd=4)
+  lines(out$p_vals,out$lik,col="violet",lwd=4)
+  legend("topleft",legend=c("prior","likelihood","posterior"),lwd=4,bty="n",col=c("darkgreen","violet","orange"),cex=3)
+  return()
+}
+
+#low sample sizes
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1.png",width=800,height=800)
+compute_dist(n=5,shape1=5,shape2=2)
+dev.off()
+
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post2.png",width=800,height=800)
+compute_dist(n=10,shape1=5,shape2=2)
+dev.off()
+
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post3.png",width=800,height=800)
+compute_dist(n=20,shape1=5,shape2=2)
+dev.off()
+
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post4.png",width=800,height=800)
+compute_dist(n=100,shape1=5,shape2=2)
+dev.off()
+
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post5.png",width=800,height=800)
+compute_dist(n=20,shape1=1,shape2=1)
+dev.off()
+
+#6 distribution to talk about the prior distribution
+png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/prior_choice.png",width=1500,height=900)
+par(mfrow=c(2,3),mar=c(4,0.2,0.3,1),mgp=c(3,3,0))
+
+curve(dunif(x,min=-50,max=50),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="A",bty="n",cex=4)
+
+curve(dnorm(x,0,10),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="B",bty="n",cex=4)
+
+curve(dnorm(x,-20,10),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="C",bty="n",cex=4)
+
+
+curve(dnorm(x,20,10),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="D",bty="n",cex=4)
+
+curve(dcauchy(x,0,20),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="E",bty="n",cex=4)
+
+curve(dt(x,1),-50,50,ylab="",yaxt="n",cex.axis=4)
+legend("topleft",legend="F",bty="n",cex=4)
+dev.off()
+
+#an example of classical MCMC algorithm:
+#with the earth-water example
+obs <- 3
+
+
+
+png("Likelihood_start.png",width=800,height=800)
+par(mar=c(4,8,2,0))
+curve(dbinom(obs,10,x),0,1,xlab="Parameter p, proportion of earth on Earth",ylab="Likelihood",cex.axis=2,cex.lab=3)
+dev.off()
+
+png("Likelihood_init.png",width=800,height=800)
+par(mar=c(4,8,2,0))
+curve(dbinom(obs,10,x),0,1,xlab="Parameter p, proportion of earth on Earth",ylab="Likelihood",cex.axis=2,cex.lab=3)
+abline(v=0.5,col="orange",lwd=3)
+dev.off()
+
+png("Likelihood_1.png",width=800,height=800)
+par(mar=c(4,8,2,0))
+curve(dbinom(obs,10,x),0,1,xlab="Parameter p, proportion of earth on Earth",ylab="Likelihood",cex.axis=2,cex.lab=3)
+abline(v=0.5,col="orange",lwd=3)
+abline(v=0.2,col="orange",lwd=2,lty=2)
+dev.off()
+
+png("Likelihood_2.png",width=800,height=800)
+par(mar=c(4,8,2,0))
+curve(dbinom(obs,10,x),0,1,xlab="Parameter p, proportion of earth on Earth",ylab="Likelihood",cex.axis=2,cex.lab=3)
+abline(v=0.5,col="orange",lwd=3)
+abline(v=0.2,col="orange",lwd=3)
+dev.off()
+
+png("Likelihood_3.png",width=800,height=800)
+par(mar=c(4,8,2,0))
+curve(dbinom(obs,10,x),0,1,xlab="Parameter p, proportion of earth on Earth",ylab="Likelihood",cex.axis=2,cex.lab=3)
+abline(v=0.5,col="orange",lwd=3)
+abline(v=0.2,col="orange",lwd=3)
+abline(v=0.15,col="orange",lwd=2,lty=2)
+dev.off()
+

@@ -50,7 +50,7 @@
  
  \author{Lionel Hertzog \& Maxime Dahirel}
  
- \date{BDA workshop, BES-Gf\"{O}, Necov joint meeting, XX December 2017, Gent}
+ \date{BDA workshop, Ecology Across Border meeting\\ 13th December 2017, Gent}
  
  
 
@@ -67,6 +67,8 @@
    \item Examples of BDA workflow (circa. 30min)
    \item Small group discussion on specific themes (circa. 30min)
   \end{enumerate}
+  
+  Make sure to check the github page of the workshop: LINK
 
  
  \end{frame}
@@ -107,14 +109,13 @@
  
  \begin{frame}
   \frametitle{\bf Bayesians can't walk on water}
-  
-<<<<<<< HEAD
+
  \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{water.jpg}
  
  Except maybe shallow water
-=======
+\note{
   Bayesian approach cannot solve experimental design issue, e.g. wanting to find effect of competition with N=2 ...
->>>>>>> b7c91fceb064dc1833fea4c4786c72d64aeb7a5a
+}
   
  \end{frame}
  
@@ -135,6 +136,27 @@
 
   
  \end{frame}
+ 
+  \begin{frame}
+  \frametitle{\bf What is Bayesian Data Analysis?}
+  
+    
+  $Posterior \propto Likelihood * Prior$
+  
+  \vspace*{1cm}
+  
+  Or:
+  
+  \vspace*{1cm}
+  
+  New knowledge $\propto$ new data * prior knowledge
+  
+  \vspace*{1cm}
+  
+  Bayesian data analysis update prior knowledge (or belief) based on new data.
+  
+ \end{frame}
+ 
  
  \begin{frame}
   \frametitle{\bf The Likelihood: what we've been doing all of our lives}
@@ -166,7 +188,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
  
  \begin{frame}
-  \frametitle{The likelihood: a graphical example}
+  \frametitle{\bf The likelihood: a graphical example}
   
   \includegraphics[width=\textwidth,height=.75\textheight,keepaspectratio]{likelihood.png}
   
@@ -179,38 +201,48 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
  \end{frame}
 
- 
  \begin{frame}
-  \frametitle{\bf Where BDA starts}
+  \frametitle{\bf The prior: our eductaed guess about the world}
   
-  $Posterior \propto Likelihood * Prior$
+  Amongst the following probability distribution which one would you think represent plausible distribution of the slope of plant richness effect on plant biomass?
   
-  Or:
+  \includegraphics[width=.9\textwidth,height=.7\textheight,keepaspectratio]{prior_choice.png}
   
-  $New knowledge \propto Current evidence * prior knowledge$
-  
-  Some graphical example of this
-  
- \end{frame}
-
-   \begin{frame}
-  \frametitle{\bf What is prior infos}
-  
-  This is something new, prior is also a probability distribution that represent our beliefs of the likely values of the parameters
+  \note{This is something new, prior is also a probability distribution that represent our beliefs of the likely values of the parameters
   This is the information that is around in the literature or in the community before doing an analysis
   Example: want to explore plant growth or whatever with a meta-analysis
   And/or information based on the nature of the parameter
-  Example: a time parameter will likely be >= 0
+  Example: a time parameter will likely be >= 0}
   
  \end{frame}
  
   \begin{frame}
-  \frametitle{\bf What is Posterior}
+  \frametitle{\bf The posterior: everything we ever wanted (from a statistical model)}
+  
+  \begin{columns}
+   \column{.3\textwidth}
+    \begin{itemize}
+     \item Combine prior infos with new data
+     \item Probability of the parameter 
+     \item Weight of prior decline as sample size increases
+    \end{itemize}
+    
+    \column{.7\textwidth}
+    \only<1>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post1.png}}
+    \only<2>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post2.png}}
+    \only<3>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post3.png}}
+    \only<4>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post4.png}}
+    \only<5>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post5.png}}
+
+  \end{columns}
+
+  \note{
   
   The posterior is also a probability distribution, it quantifies the probability of parameter values knowing the data (the likelihood) and our expectation (prior)
   The impact of the data vs the expectation depends on the sample size, with low sample size the prior is relatively more important (little information in the data), as
   sample size grows the likelihood gets more and more weights, a simple example (maybe a shiny app ...)
   % I like the idea of the shiny app, maybe using a simple example like the prop water/land in the StatRethinking book?
+  }
   
   \end{frame}
 
@@ -220,10 +252,32 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
 \begin{frame}
  \frametitle{\bf The key aspects of BDA}
  
+ \begin{figure}
+  \includegraphics[width=\textwidth,height=.75\textheight,keepaspectratio]{summ.png}
+ \end{figure}
+ 
+ \begin{columns}
+  \column{.45\textwidth}
+   \begin{itemize}
+    \item Everything is distribution
+    \item Integrate prior knowledge
+   \end{itemize}
+   
+   \column{.5\textwidth}
+    \begin{itemize}
+     \item Models as data-generators
+     \item Easy interpretation
+    \end{itemize}
+
+
+ \end{columns}
+
+
+ \note{
  Explicitly integrate prior knowledge 
  Output probability for the parameters/hypothesis, posterior
  Uncertainty is everywhere
- Think of models as data-generating processes
+ Think of models as data-generating processes}
  
 \end{frame}
 
@@ -232,36 +286,213 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \begin{frame}
   \frametitle{\bf Ways to fit bayesian models in R}
   
-  Coding in probability language vs using wrappers
+  
+  
+  Two main options are available to fit bayesian models in R:
+  
+  \vspace{1cm}
+  
+  \begin{columns}
+   \column{.5\textwidth}
+   Using special probability language:
+   \begin{itemize}
+    \item JAGS via rjags
+    \item STAN via rstan
+   \end{itemize}
+   
+   \column{.5\textwidth}
+   Using packages that translate R formula into probability language:
+   \begin{itemize}
+    \item rstanarm
+    \item brms
+   \end{itemize}
+
+
+  \end{columns}
+
+  
+  \note{Coding in probability language vs using wrappers
   STAN is a programming language in its own so can code the models direclty in it (some snippet code example of simple model)
   Knowing this we have the full flexibility to fit any model we want but we also have the full possibility that we make coding/interpretation
   errors that are not visible.
   There are a couple of R packages to transcribe the standard R formula synthax into STAN models: rstanarm and brms. With this option we are sure that the model
   code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developers have
-  implemented. 
+  implemented.}
   
  \end{frame}
 
   \begin{frame}
-  \frametitle{\bf The sampling}
+  \frametitle{\bf The sampling: the issue of complex likelihood surface}
   
-  Blind man in the likelihood landscape, how do we effectively sample it
+  \note{Blind man in the likelihood landscape, how do we effectively sample it, it is hard to compute the integral in the numerator for typical analysis problems so we have to rely on computational techniques}
+  
+  \begin{figure}
+   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{like_surf.png}
+  \end{figure}
+
+  {\scriptsize The sampler should travel around in the likelihood space but spend more time in area of high likelihood than in area of low likelihood}
+  
   
  \end{frame}
  
  \begin{frame}
-  \frametitle{\bf About MCMC}
+  \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
   
-  Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
+  \begin{enumerate}
+   \item Start with arbitrary parameter values and compute the likelihood at this point
+   \item Pick new values for all parameter in the model based on the prior distributions
+   \item Compute the new likelihood for these values
+   \item If the new likelihood is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
+  \end{enumerate}
+
+  
+  \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
+  Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
+  
+ \end{frame}
+ 
+ \begin{frame}
+  \frametitle{\bf A simple MCMC example: How much earth is on Earth?}
+  
+  \begin{columns}
+   \column{.4\textwidth}
+    \includegraphics[width=\textwidth,height=.4\textheight,keepaspectratio]{globe.jpeg}
+    
+    \only<1>{We tossed the globe 10 times and we landed 3 times on land. The parameter to estimate is: $\mathcal{B}(10, p)$
+    
+    \vspace*{0.2cm}
+    
+    {\scriptsize (Example from Statistical rethinking, Richard McElreath)}}
+    
+    \only<2->{
+    
+    \vspace*{0.5cm}
+    
+    MCMC samples:}
+    
+    \vspace*{0.3cm}
+    
+    \only<2->{0.5}\only<4->{, 0.2}
+    
+    
+   \column{.6\textwidth}    
+   
+   \only<1>{
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_start.png}
+   
+   \vspace*{0.5cm}
+   
+   }
+   
+      \only<2>{\scriptsize
+      
+       Pick a starting value: 0.5, the likelihood is: 0.12
+       
+       \vspace*{0.3cm}
+      
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_init.png}   
+   }
+   
+         \only<3>{\scriptsize
+         
+         Pick a new value: 0.2, the new likelihood is: 0.20
+         
+         \vspace*{0.3cm}
+         
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_1.png}   
+   }
+   
+         \only<4>{\scriptsize
+         
+         Old likelihood \textless~New likelihood, jump.
+         
+          \vspace*{0.3cm}
+         
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_2.png}     
+   }
+   
+            \only<5>{\scriptsize
+         
+        Pick a new value: 0.15, the new likelihood is: 0.13
+         
+          \vspace*{0.3cm}
+         
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_3.png}     
+   }
+   
+               \only<6>{\scriptsize
+         
+        The new value will be accepted with a probability of 0.13 / 0.20
+         
+          \vspace*{0.3cm}
+         
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_3.png}     
+   }
+   
+                  \only<7>{\scriptsize
+         
+        The jump failed, go back to previous value
+         
+          \vspace*{0.3cm}
+         
+   \includegraphics[width=\textwidth,height=.7\textheight]{Likelihood_2.png}     
+   }
+   
+   \only<8>{
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{trace.png}
+   }
+             
+   
+   
+     
+    \note{\only<2->{We pick a starting value of 0.5, the likelihood at this starting value is: 0.12} 
+    
+    \vspace*{0.1cm}
+    
+    \only<3->{From our prior we pick a new parameter value of 0.2, the likelihood there is: 0.20} 
+    
+    \vspace*{0.1cm}
+    
+    \only<4->{The sampler jump to this new value; we pick a new value (0.15), the likelihood there is: 0.13} 
+    
+    \vspace*{0.1cm}
+    
+    \only<5->{We compute the ratio of new to old likelihood (0.65), this is the probability that the sampler jump to this value}
+    
+    \vspace*{0.1cm}
+    
+    \only<6->{The jump failed, the sampler stay at the old value (0.2) and a new valus is picked} 
+    
+    \vspace*{0.1cm}
+    
+    \only<7>{Do this many times}}
+   
+  \end{columns}
+
+  
+  
+  
+  
   
  \end{frame}
 
 
+
   \begin{frame}
-  \frametitle{\bf Different samplers}
+  \frametitle{\bf Different MCMC algorithm / samplers}
   
-  JAGS: Adaptively tries to find the best sampler corresponding to your model
-  STAN: Use Hamiltonian Monte Carlo (see Monnahan et al 2017 MEE)
+  Different MCMC algorithms are available:
+  
+  \begin{itemize}
+   \item JAGS: tunes the MCMC algorithm to find the best one according to the model (conjugate priors, Metropolis-Hastings ...), most of these show random-walk behavior
+   \item STAN: uses Hamiltonian-Monte Carlo another class of MCMC sampling algorithm, it is more efficient for sampling the posterior (fewer samples needed) but need some careful tuning
+  \end{itemize}
+  
+  For more infos see:\\
+  M. Betancourt, \url{https://arxiv.org/abs/1701.02434}\\
+  C.C. Monnahan, \url{http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12681/full}
+  
+
   
  \end{frame}
  
@@ -269,21 +500,45 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \begin{frame}
   \frametitle{\bf Elements of Bayesian vocabulary}
   
-  Chains, convergence, divergence, Rhat, n\_eff
+   \begin{itemize}
+   \item Chains: number of markov chains ran, best to have at least 3
+   \item Convergence: property of the markov chains, at convergence the MCMC samples represent the posterior distribution
+   \item Divergence: property of the markov chains, when the sampler do not effectively move in the parameter space
+   \item Rhat: indicator to check convergence of the markov chains, a value of 1 indicate convergence
+   \item n\_eff: number of effective samples, due to autocorrelation in the markov chains fewer samples are taken than expected, n\_eff / number of MCMC sample should be larger than XX
+  \end{itemize}
+
   
  \end{frame}
  
   \begin{frame}
   \frametitle{\bf Model checking in Bayesian data analysis}
   
-  convergence, n\_eff, chains, posterior predictive checks
+  Your best friend for model checking is the \textbf{shinystan} package
+  
+  \begin{figure}
+   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{shiny.png}
+  \end{figure}
+  
+  To be explored during the coding session
+
   
  \end{frame}
  
   \begin{frame}
   \frametitle{\bf Model comparison/selection}
   
-  LOOC, WAIC
+  A couple of information criteria metrics should be used:
+  
+  \begin{enumerate}
+   \item Watanabe-Akaike Information Criteria: basically the summed log likelihood over the posterior samples (predictive density) minus the effective number of parameters, better than the DIC since it uses all posterior samples instead of point estimates.
+   \item Leave-One Out cross-validation: drop one data point at a time and re-estimate the predictive density, this methods is commonly used for machine learning models to avoid problems like overfitting.
+  \end{enumerate}
+  
+  \vspace*{0.2cm}
+  
+  Both are readily available for STAN models through the \textbf{loo} package
+
   
  \end{frame}
  
@@ -293,41 +548,98 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \begin{frame}
   \frametitle{\bf Embracing uncertainty}
   
-  Everything is variable, all parameters come with (posterior) distribution, can interprete posterior sample
-  as probabilities, flexibility to test any hypothesis building on these
+  \begin{figure}
+   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{posterior-params.png}
+  \end{figure}
+
+  
+  \note{Everything is variable, all parameters come with (posterior) distribution, can interprete posterior sample
+  as probabilities, flexibility to test any hypothesis building on these}
   
  \end{frame}
  
   \begin{frame}
   \frametitle{\bf Flexibility in model building}
   
-  As long as you can write your likelihood function you can fit any model you like (similar to using MLE approach
-  ie with bbmle)
+  It all comes down to the likelihood, as long as you can write down the likelihood function you can fit whatever model you want.
+  
+  \begin{figure}
+   \includegraphics[width=.7\textwidth,height=.6\textheight,keepaspectratio]{summ.png}
+  \end{figure}
+
+   \note{As long as you can write your likelihood function you can fit any model you like (similar to using MLE approach
+  ie with bbmle)}
   
  \end{frame}
  
-  \begin{frame}
-  \frametitle{\bf Why do we do stats?}
+ \begin{frame}
+  \frametitle{\bf Models as data-generating processes}
   
-  Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
-  terms of frequency
+  \begin{figure}
+   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{cogs_f.png}
+  \end{figure}
+
+  Note that this also applies to frequentist approaches
+  
+ \end{frame}
+
+ 
+  \begin{frame}
+  \frametitle{\bf Bayesian approach output what we want}
+  
+  Posterior samples from the MCMC can be interpreted as probabilities.\\
+  
+  \vspace*{0.3cm}
+  
+  It is easy and straightforward to manipulate them to get what you want (probability intervals, hypothesis tests ...) all with easy interpretation.\\
+  
+  \vspace*{0.3cm}
+  
+  Very different from complex and convulated concepts like p-values, confidence intervals, null hypothesis ...
+  
+   \note{Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
+  terms of frequency, }
   
  \end{frame}
  
   \begin{frame}
   \frametitle{\bf No degrees of freedom}
   
-  Fit complex models even with little data (is this something we want??)
+  With Bayesian approach we can fit models with more parameters than data points
+  
+  \vspace*{0.3cm}
+  
+  This is due to the prior distributions, it provides extra information to the model along the observed data
+  
+  \vspace*{0.3cm}
+  
+  BUT this does not absolve us from statistical machismo (sensu Brin McGill)
   
  \end{frame}
  
   \begin{frame}
   \frametitle{\bf Asymptotic convergence, when bayesian and frequentist approach give similar answers}
   
-  With infinite sample size the posterior distribution just reflect the likelihood, as sample size increases
-  priors have dwindling effects
+  As sample size increase the posterior is drawn closer and closer to the likelihood, in other words at infinite sample size the posterior is the likelihood
+  
+  \vspace*{0.3cm}
+  
+  The relative importance of the likelihood vs the prior depends on the complexity of the models, if sample size is fixed, the more parameters, the more the posterior is affected by the prior
+  
+  \note{With infinite sample size the posterior distribution just reflect the likelihood, as sample size increases
+  priors have dwindling effects}
   
  \end{frame}
+ 
+ \begin{frame}
+  \frametitle{\bf A picture can save thousands of words}
+  
+  \begin{figure}
+   \includegraphics[width=\textwidth,height=.8\textheight,keepaspectratio]{frequentists_vs_bayesians.png}
+  \end{figure}  
+  
+ \end{frame}
+
  
 \end{document}
 
