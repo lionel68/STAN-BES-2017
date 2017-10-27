@@ -1,6 +1,6 @@
 /*
 Negative binomial regression for any number of predictor variables
-with weakly informative priors on the betas and on the standard deviation
+with weakly informative priors on the betas and on the overdispersion parameter
 */
 data{
 	int<lower=1> N; //number of observations
@@ -22,13 +22,13 @@ model{
 	beta[2:K] ~ normal(0,5);
 	phi ~ normal(0,50);
 
-	y ~ neg_binomial_2(mu,phi); //the likelihood
+	y ~ neg_binomial_2_log(mu,phi); //the likelihood
 
 }
 
 generated quantities{
 	int<lower=0> y_gen[N];
 	for(n in 1:N)
-		y_gen[n] = neg_binomial_2_rng(X[n] * beta,sigma);
+		y_gen[n] = neg_binomial_2_log_rng(X[n] * beta,phi);
 }
 
