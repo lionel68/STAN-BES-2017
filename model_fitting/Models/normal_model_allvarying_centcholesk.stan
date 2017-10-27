@@ -18,8 +18,7 @@ parameters{
 	cholesky_factor_corr[K] L; //correlation between varying effects
 	vector<lower=0>[K] tau; //variation of the varying effects
 	
-	
-	matrix[N_group, K] z;//matrix for the non-centered parametrization
+	vector[K] beta[N_group];//matrix of group-level effects
 	
 	real<lower=0> sigma_residuals;//the variation of the residuals
 
@@ -27,25 +26,28 @@ parameters{
 }
 transformed parameters{
 	
-	//matrix[K,K] L_Sigma; //the variance-covariance matrix between the varying effects
-	matrix[N_group,K] beta;//matrix of group-level effects
-	
-	beta = rep_matrix(mu, N_group)' + (z * diag_pre_multiply(tau, L));//this is equivalent to: beta~multi_normal(mu,Sigma)
 }
 
 model{
-	tau ~ cauchy(0, 2.5); //prior for the scale
-	L ~ lkj_corr_cholesky(2); // prior on the cholesky matrix
-	mu ~ normal(0, 5);
+	tau ~ cauchy(0,2.5);
+	L ~ lkj_corr_cholesky(2);
+	mu ~ normal(0,5);
 
-	to_vector(z) ~ normal(0, 1);//standard normal values, easier to sample than a multi-normal distribution
+	beta ~ multi_normal_cholesky(mu, diag_pre_multiply(tau,L));
 
-	y ~ normal(rows_dot_product(beta[ID_group],X), sigma_residuals);
+	{
+		vector[N] lin_pred; //the linear predictor
+		for(n in 1:N)
+			lin_pred[n] = X[n] * beta[ID_group[n]];
+		y ~ normal(lin_pred,sigma_residuals);
+
+	}
 }
 
 generated quantities{
 	//vector[N] y_gen;
-	matrix[K,K] Sigma; //the variance-covariance matrix of the varying effects
+	matrix[K, K] Sigma; //the variance covariance matrix of the varying effects
+
 	//for(n in 1:N)
 	//	y_gen[n] = normal_rng(X[n] * beta[ID_group[n]],sigma_residuals);
 

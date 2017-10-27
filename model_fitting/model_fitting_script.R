@@ -13,8 +13,11 @@
 library(rstan)
 library(bayesplot)
 library(brms)
+library(shinystan)
 library(ggplot2)
 library(reshape2)
+library(plyr)
+library(MASS)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()) #this allows STAN to run chains on parallel cores
 
@@ -32,16 +35,14 @@ dat$y <- rnorm(100,modmat %*% betas, 1)
 
 ## Fit the model
 lin_brms <- brm(y ~ X1 * F1, dat)
-
 #in rstanarm you could use: stan_lm(y~X1*F1,dat)
-
 #you can look at the underlying STAN code using stancode(lin_brms)
 #for the pure stan code check: 
-lin_stan <- stan(file = 'model_fitting/Models/normal_model_basic.stan',
-                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
+#lin_stan <- stan(file = 'model_fitting/Models/normal_model_basic.stan',
+#                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 #get the MCMC samples
-lin_mcmc <- as.matrix(lin_brms) #to test
+lin_mcmc <- as.matrix(lin_brms) 
 
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
@@ -52,6 +53,8 @@ neff_ratio(lin_brms)
 pp_check(lin_brms,type = "dens_overlay",nsamples=100)
 pp_check(lin_brms,type = "stat_2d")
 pp_check(lin_brms,type = "stat")
+#could also use shinystan
+#launch_shiny(lin_brms)
 
 ## Do model inference
 #summaries of parameters
@@ -76,27 +79,29 @@ ggplot(dat,aes(x=X1,y=y,color=F1))+geom_point()+
 #another way of looking at this is too sample 100 MCMC values for
 #all parameters and compute the regression lines
 rnd_mcmc <- sample(1:4000,100,replace=FALSE)
-predd <- apply(lin_mcmc[rnd_mcmc,],1,function(x) modpred%*%x[1:4])
+predd <- adply(lin_mcmc[rnd_mcmc,],1,function(x) modpred%*%x[1:4]) #note: adply is necessary here to have everything in a melted format
 predd <- cbind(predd,pred) #some R magic in the background
 names(predd)[1:2] <- c("MCMC_id","predict")
+#in this plot with 100 realization of the regression line
 ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
   geom_point(data=dat,aes(x=X1,y=y))
 
+#[Lionel]: I would remove this, might be a bit confusing ...
 #posterior predictive distribution for each data points
-predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
-predD <- melt(predI)
+#predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
+#predD <- melt(predI)
 
 #[Maxime]plot below doesn't work as there is no Var2 in predD
-ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
-  geom_point(data=dat,aes(x=1:100,y=y),color="red",size=3)+
-  labs(x="Row index",y="Y value")
+#[Lionel] it worked for me ...
+#ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
+#  geom_point(data=dat,aes(x=1:100,y=y),color="red",size=3)+
+#  labs(x="Row index",y="Y value")
 
 #testing hypothesis
 #for instance the hypothesis that the effect of F1 is stronger than the effect of X1
 sum(abs(lin_mcmc[,"b_F12"]) > abs(lin_mcmc[,"b_X1"])) / dim(lin_mcmc)[1]
 #the probability that observations in group 1 are bigger than observations in group 2
-#[Maxime] doesn't work, no object named "lin_mcmc_m"
-sum(lin_mcmc_m[,1] > (lin_mcmc_m[,1] + lin_mcmc_m[,"b_F12"])) / dim(lin_mcmc_m)[1]
+sum(lin_mcmc[,1] > (lin_mcmc[,1] + lin_mcmc[,"b_F12"])) / dim(lin_mcmc)[1]
 
 
 ############# Generalized linear model ############
@@ -111,7 +116,9 @@ dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
 #in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
 #you can again look at the underlying STAN code using stancode(poi_brms)
-#or pure stan code is available under: poisson_model_basic.stan
+#or use:
+#poi_stan <- stan(file = 'model_fitting/Models/poisson_model_basic.stan',
+#                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 
 #get the MCMC samples
@@ -137,7 +144,9 @@ abline(h=1,col="blue",lty=2,lwd=2) #clear indication for underdispersion in the 
 ### Use overdispersed poisson
 nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
 #in rstanarm: stan_glm.nb(y~X1*X2,dat)
-#the pure stan code is available under: neg_binomial_basic.stan
+#or use:
+#nb_stan <- stan(file = 'model_fitting/Models/neg_binomial_basic.stan',
+#                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 #get the MCMC samples
 nb_mcmc <- as.matrix(nb_brms)
@@ -181,23 +190,26 @@ ggplot(dat,aes(x=X1,y=y,group=X2))+geom_point()+
 ############ Generalized Linear Mixed effect model #########
 ### Simulate some data
 dat <- data.frame(X1=runif(100,-2,2),Group=gl(n=10,k=10))
-modmat <- model.matrix(~X1*Group,dat)
-betas <- c(1,2,rnorm(9,0,1),rnorm(9,0,0.1))
-dat$y <- rnorm(100, modmat %*% betas, 1)
+mu <- c(1,2)
+sigma <- matrix(c(2,1,1,3),ncol=2)
+betas <- mvrnorm(n=10,mu,sigma)
+dat$y <- rnorm(100, betas[dat$Group,1] + dat$X1 * betas[dat$Group,2], 1)
 #look at simulated data
 ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+stat_smooth(method="lm",se=FALSE)
 
 ### fit the model
 hier_brms <- brm(y ~ X1 + (X1 | Group),dat)
 #in rstanarm: stan_lmer(y~X1+(X1|Group),dat)
-#pure stan code available in two versions: normal_model_allvarying_cent.stan
-#hier <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_allvarying_cent.stan',
+#pure stan code available in three versions:
+#a standard centered version
+#hier <- stan(file = 'model_fitting/Models/normal_model_allvarying_cent.stan',
 #             data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
-#hier_non <- stan(file = '/media/lionel/USB_Lio/PostDoc/Workshop_BES/GitFolder/model_fitting/Models/normal_model_allvarying_noncent.stan',
+#a version where using the cholesky matrix for the covariance between the varying effects
+#hier_chol <- stan(file = 'model_fitting/Models/normal_model_allvarying_centcholesk.stan',
+#             data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
+#a non-centered version with a cholesky factorization
+#hier_non <- stan(file = 'model_fitting/Models/normal_model_allvarying_noncent.stan',
 #                 data=list(N=nrow(dat),K=2,N_group=10,ID_group=as.numeric(dat$Group),X=modmat[,1:2],y=dat$y))
-#the non-centered approach still does not work
-
-#and normal_model_allvarying_noncent.stan
 
 #get MCMC samples
 hier_mcmc <- as.matrix(hier_brms)
@@ -214,7 +226,7 @@ pp_check(hier_brms,type = "stat_2d")
 ## Do model inference
 #look at shrinkage effects
 
-#TODO !!!!
+#TODO !!!! but am wondering if this is not too much ... the session is already 300 lines long for 30min
 
 #summaries of parameters
 mcmc_areas(as.mcmc(hier_brms),regex_pars=c("b","sigma","sd"))
@@ -230,7 +242,7 @@ pred <- data.frame(X1=pred$X1,LCI=condint[1,],Med=condint[2,],UCI=condint[3,],Gr
 ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+
   geom_line(data=pred,aes(y=Med),color="black")+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),alpha=0.2,color="grey")
-                  #[Maxime]geom_ribbon is giving warnings that it ignores argument y=, here and below
+                  
 
 #include group-level uncertainty, so conditional on groups
 predgroup <- apply(hier_mcmc,1,function(x) rnorm(1,x[1],x[3]) + rnorm(1,x[2],x[4]) * pred$X1)
@@ -252,10 +264,13 @@ sum(hier_mcmc[,4] > hier_mcmc[,5]) / 4000
 ### simulate some data
 dat <- data.frame(X1=runif(100,-2,2))
 modmat <- model.matrix(~X1+I(X1^2),dat)
-p_i <- rbinom(n = 100,size = 1,prob=0.7)
+p_i <- rbinom(n = 100,size = 1,prob=0.8)
 e_i <- rnorm(100,0,0.33)
-lbd_i <- exp(modmat %*% c(2,0.5,-0.4) +e_i)
+lbd_i <- exp(modmat %*% c(2,0.6,-0.6) + e_i)
 dat$N <- rpois(100,lbd_i * p_i)
+dat$ID <- 1:100
+#plot the effect
+plot(N ~ X1,dat)
 
 ### a first naive poisson model
 poi_brm <- brm(N ~ X1 + I(X1^2),dat,family=poisson)
@@ -284,10 +299,11 @@ abline(h=1,col="blue",lty=2,lwd=2)
 #evidence for both zero-inflation and overdispersion
 
 ### a second zero inflated overdispersed poisson model
-dat$ID <- 1:nrow(dat)
 zib_brm <- brm(N ~ X1 + I(X1^2) + (1 | ID), dat, family = zero_inflated_poisson)
 #no option (yet) in rstanarm but relatively easy to code in STAN or JAGS
-#TODO: make the STAN code for this one
+#zib <- stan("model_fitting/Models/zero_inflated_overdispersed_poisson.stan",
+#            data=list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$N))
+
 
 zib_mcmc <- as.matrix(zib_brm)
 ### Check the model
@@ -306,7 +322,7 @@ obs_0 <- sum(dat$N==0)
 hist(apply(ppp==0,2,sum))
 abline(v=obs_0,col="orange",lwd=2)
 #look at the QRS
-QRS <- sapply(1:100,function(i) mean(ppp[i,] +runif(4000,-0.5,0.5) > dat$N[i]))
+QRS <- sapply(1:100,function(i) mean(ppp[i,] + runif(4000,-0.5,0.5) > dat$N[i]))
 hist(QRS,freq=FALSE,col="grey")
 abline(h=1,col="blue",lty=2,lwd=2)
 
@@ -329,6 +345,12 @@ ggplot(dat,aes(x=X1,y=N))+geom_point()+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),color="grey30",alpha=0.5)+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI_pred,ymax=UCI_pred),color="grey10",alpha=0.2)+
   labs(x="Environmental gradient",y="Counts")
+
+########### end of the training session script ###########
+
+
+######## Code to generate some of the figures in the introduction presentation ######
+
 
 #try out to make prior, likelihood and posterior distribution from
 #a binomial problem
