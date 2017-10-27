@@ -19,6 +19,6 @@ One folder for each part of the workshop (introduction, model\_fitting, small\_g
 
 * First version of the presentation and coding script uploaded on the 27th of October
 
-* Test session by Lionel in Gent on the 21st of November
+* Test session by Lionel in Gent on the 21st of November.
 
 
