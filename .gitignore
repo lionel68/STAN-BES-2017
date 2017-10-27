@@ -1,13 +1,9 @@
-*.png
-*.pdf
 *.html
 *.log
 *.nav
 *.tex.backup
-*.jpeg
 *.toc
 *.out
 *.snm
-*.jpg
 *.Rhistory
 
