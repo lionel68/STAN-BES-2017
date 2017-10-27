@@ -89,7 +89,7 @@
  
  \begin{frame}
   \frametitle{\bf Why do we do Stats?}
-  
+
   \begin{enumerate}
    \item To test hypothesis?
    \item To explore patterns and relationships?
@@ -105,7 +105,6 @@
   Bayesian data analysis is one way to do stats, it is well suited for some situation but poorly suited for others.
   
   \note{Some elements of inference, how does it fits into the science workflow
-  
   Scientists are interested with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
   Data are then assembled/collected and one wants to extract the big world signal in the data, statistical inference provide this bridge between complex data and
   theories.} 
@@ -139,7 +138,7 @@
 
    \note{Bayesian data analaysis uses the same models as developed in classical stats,
    so there is no hierarchical bayesian models, but rather hierarchical models fit using a
-   bayesian framework, this is pretty conforting as this means that we can continue fitting the same
+   bayesian framework, this is pretty comforting as this means that we can continue fitting the same
    model we've been using except this time with all advantages confered by bayesian data analysis.}
 
   
@@ -161,7 +160,7 @@
   
   \vspace*{1cm}
   
-  Bayesian data analysis update prior knowledge (or belief) based on new data.
+  Bayesian data analysis updates prior knowledge (or belief) based on new data.
   
  \end{frame}
  
@@ -302,14 +301,14 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
   \begin{columns}
    \column{.5\textwidth}
-   Using special probability language:
+   Directly using a dedicated probability language:
    \begin{itemize}
     \item JAGS via rjags
     \item STAN via rstan
    \end{itemize}
    
    \column{.5\textwidth}
-   Using packages that translate R formula into probability language:
+   Using packages that translate R formulas into the probability language:
    \begin{itemize}
     \item rstanarm
     \item brms
@@ -510,10 +509,10 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
    \begin{itemize}
    \item Chains: number of markov chains ran, best to have at least 3
-   \item Convergence: property of the markov chains, at convergence the MCMC samples represent the posterior distribution
-   \item Divergence: property of the markov chains, when the sampler do not effectively move in the parameter space
-   \item Rhat: indicator to check convergence of the markov chains, a value of 1 indicate convergence
-   \item n\_eff: number of effective samples, due to autocorrelation in the markov chains fewer samples are taken than expected, n\_eff / number of MCMC sample should be larger than XX
+   \item Convergence: property of the Markov chains, at convergence the MCMC samples represent the posterior distribution
+   \item Divergence: property of the Markov chains, when the sampler do not effectively move in the parameter space
+   \item Rhat: indicator to check convergence of the Markov chains, a value of 1 indicate convergence
+   \item n\_eff: number of effective samples, due to autocorrelation in the Markov chains fewer samples are taken than expected, n\_eff / number of MCMC sample should be larger than XX
   \end{itemize}
 
   
@@ -593,7 +592,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
 
  
   \begin{frame}
-  \frametitle{\bf Bayesian approach output what we want}
+  \frametitle{\bf Bayesian approach output is what we actually want}
   
   Posterior samples from the MCMC can be interpreted as probabilities.\\
   
@@ -621,7 +620,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
   \vspace*{0.3cm}
   
-  BUT this does not absolve us from statistical machismo (sensu Brin McGill)
+  BUT this does not absolve us from statistical machismo (sensu Brian McGill)
   
  \end{frame}
  
