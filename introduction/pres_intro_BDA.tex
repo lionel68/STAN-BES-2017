@@ -240,7 +240,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
     \only<3>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post3.png}}
     \only<4>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post4.png}}
     \only<5>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post5.png}}
-
+%\if possible adjust so that images and text don't move up and down during animations
   \end{columns}
 
   \note{
@@ -338,6 +338,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \end{figure}
 
   {\scriptsize The sampler should travel around in the likelihood space but spend more time in area of high likelihood than in area of low likelihood}
+  %\maybe add an animation showing the first likelihood plot from a few slides before first, so that people better understand what this one is
   
   
  \end{frame}
@@ -449,7 +450,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
     \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{trace.png}
    }
              
-   
+  %\if possible adjust so that images and text don't move up and down during animations 
    
      
     \note{\only<2->{We pick a starting value of 0.5, the likelihood at this starting value is: 0.12} 
@@ -508,11 +509,11 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \frametitle{\bf Elements of Bayesian vocabulary}
   
    \begin{itemize}
-   \item Chains: number of markov chains ran, best to have at least 3
+   \item Chains: number of Markov chains ran, best to have at least 3
    \item Convergence: property of the Markov chains, at convergence the MCMC samples represent the posterior distribution
-   \item Divergence: property of the Markov chains, when the sampler do not effectively move in the parameter space
+   \item Divergence: property of the Markov chains, when the sampler does not effectively move in the parameter space
    \item Rhat: indicator to check convergence of the Markov chains, a value of 1 indicate convergence
-   \item n\_eff: number of effective samples, due to autocorrelation in the Markov chains fewer samples are taken than expected, n\_eff / number of MCMC sample should be larger than 0.1
+   \item n\_eff: number of effective samples, due to autocorrelation in the Markov chains fewer samples are taken than expected, n\_eff / number of MCMC samples should be larger than 0.1
   \end{itemize}
 
   
@@ -602,7 +603,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
   \vspace*{0.3cm}
   
-  Very different from complex and convulated concepts like p-values, confidence intervals, null hypothesis ...
+  Very different from complex and convoluted concepts like p-values, confidence intervals, null hypothesis ...
   
    \note{Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
   terms of frequency, }
@@ -644,7 +645,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \begin{figure}
    \includegraphics[width=\textwidth,height=.8\textheight,keepaspectratio]{frequentists_vs_bayesians.png}
   \end{figure}  
-  
+  %\add figure source?
  \end{frame}
 
  
