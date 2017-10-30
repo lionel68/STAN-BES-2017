@@ -86,6 +86,7 @@ names(predd)[1:2] <- c("MCMC_id","predict")
 ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
   geom_point(data=dat,aes(x=X1,y=y))
 
+##[Maxime] OK with removing all this below  (up to "testing hypothesis" to improve clarity)               
 #[Lionel]: I would remove this, might be a bit confusing ...
 #posterior predictive distribution for each data points
 #predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
@@ -132,14 +133,17 @@ neff_ratio(poi_brms)
 #posterior predictive check
 pp_check(poi_brms,type = "dens_overlay",nsamples=100)
 pp_check(poi_brms,type = "stat_2d")
-#mean is pretty much ok but sd is way higher than the data
-#use quantile regession to get this infos
-ppred <- apply(poi_mcmc[,-5],1,function(x) rpois(100,exp(modmat %*% x))) #compute post predictive distribution
-qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
-hist(qrs,freq=FALSE,col='grey')
-abline(h=1,col="blue",lty=2,lwd=2) #clear indication for underdispersion in the posterior predicted data
+#mean is pretty much ok but sd is way lower in predictions than in the data
+               
+#[Maxime] I'd comment he plot below out to avoid having too many plots
+#not needed for demonstration, but can be accessed by people if they want
+#use quantile regression to get this infos
+#ppred <- apply(poi_mcmc[,-5],1,function(x) rpois(100,exp(modmat %*% x))) #compute post predictive distribution
+#qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
+#hist(qrs,freq=FALSE,col='grey')
+#abline(h=1,col="blue",lty=2,lwd=2) #clear indication for underdispersion in the posterior predicted data
 
-#clear example of overdispersion
+#so clear example of overdispersion in data
 
 ### Use overdispersed poisson
 nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
@@ -160,10 +164,11 @@ neff_ratio(nb_brms)
 pp_check(nb_brms,type = "dens_overlay",nsamples=100)
 pp_check(nb_brms,type = "stat_2d")
 #again some quantile regression
-ppred <- apply(nb_mcmc[,-6],1,function(x) rnbinom(100,mu=exp(modmat %*% x[1:4]),size=x[5]))
-qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
-hist(qrs,freq=FALSE,col="grey")
-abline(h=1,col="blue",lty=2,lwd=2)
+#[Maxime] commented out, same as above
+#ppred <- apply(nb_mcmc[,-6],1,function(x) rnbinom(100,mu=exp(modmat %*% x[1:4]),size=x[5]))
+#qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
+#hist(qrs,freq=FALSE,col="grey")
+#abline(h=1,col="blue",lty=2,lwd=2)
 
 
 ## Do model inference
@@ -253,7 +258,7 @@ ggplot(dat,aes(x=X1,y=y,color=Group))+geom_point()+
   geom_line(data=pred,aes(y=Med),color="black")+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),alpha=0.2,color="grey")+
   geom_ribbon(data=pred,aes(y=Medg,ymin=LCIg,ymax=UCIg),alpha=0.2,color="grey70")
-
+#[Maxime] I have some warnings that plotting ignore some  y lines; will look into it in more detail
 #some hypothesis testing
 #probability that variation in intercept is higher than variation in slopes
 sum(hier_mcmc[,4] > hier_mcmc[,5]) / 4000
@@ -293,9 +298,9 @@ obs_0 <- sum(dat$N==0)
 hist(apply(ppp==0,2,sum),xlim=c(0,obs_0 + 5))
 abline(v=obs_0,col="orange",lwd=2)
 #look at the QRS
-QRS <- sapply(1:100,function(i) mean(ppp[i,] +runif(4000,-0.5,0.5) > dat$N[i]))
-hist(QRS,freq=FALSE,col="grey")
-abline(h=1,col="blue",lty=2,lwd=2)
+#QRS <- sapply(1:100,function(i) mean(ppp[i,] +runif(4000,-0.5,0.5) > dat$N[i]))
+#hist(QRS,freq=FALSE,col="grey")
+#abline(h=1,col="blue",lty=2,lwd=2)
 #evidence for both zero-inflation and overdispersion
 
 ### a second zero inflated overdispersed poisson model
@@ -322,9 +327,9 @@ obs_0 <- sum(dat$N==0)
 hist(apply(ppp==0,2,sum))
 abline(v=obs_0,col="orange",lwd=2)
 #look at the QRS
-QRS <- sapply(1:100,function(i) mean(ppp[i,] + runif(4000,-0.5,0.5) > dat$N[i]))
-hist(QRS,freq=FALSE,col="grey")
-abline(h=1,col="blue",lty=2,lwd=2)
+#QRS <- sapply(1:100,function(i) mean(ppp[i,] + runif(4000,-0.5,0.5) > dat$N[i]))
+#hist(QRS,freq=FALSE,col="grey")
+#abline(h=1,col="blue",lty=2,lwd=2)
 
 #look at predicted regression with credible and predicted intervals
 pred <- data.frame(X1=seq(-2,2,0.1))
@@ -345,6 +350,7 @@ ggplot(dat,aes(x=X1,y=N))+geom_point()+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI,ymax=UCI),color="grey30",alpha=0.5)+
   geom_ribbon(data=pred,aes(y=Med,ymin=LCI_pred,ymax=UCI_pred),color="grey10",alpha=0.2)+
   labs(x="Environmental gradient",y="Counts")
+#[Maxime] I have some warnings that plotting ignore some  y lines; will look into it in more detail
 
 ########### end of the training session script ###########
 
