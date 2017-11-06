@@ -45,7 +45,7 @@
 
 \graphicspath{{./Figures/}}
 
- \title{An introduction to Bayesian Data Analysis using STAN}
+ \title{An introduction to Bayesian Data Analysis using Stan}
  \subtitle{}
  
  \author{Lionel Hertzog \& Maxime Dahirel}
@@ -68,7 +68,7 @@
    \item Small group discussion on specific themes (circa. 30min)
   \end{enumerate}
   
-  Make sure to check the github page of the workshop: \url{https://github.com/lionel68/STAN-BES-2017}
+  Make sure to check the github page of the workshop: \url{https://github.com/lionel68/Stan-BES-2017}
 
  
  \end{frame}
@@ -304,7 +304,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    Directly using a dedicated probability language:
    \begin{itemize}
     \item JAGS via rjags
-    \item STAN via rstan
+    \item Stan via rstan
    \end{itemize}
    
    \column{.5\textwidth}
@@ -319,11 +319,11 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
 
   
   \note{Coding in probability language vs using wrappers
-  STAN is a programming language in its own so can code the models direclty in it (some snippet code example of simple model)
+  Stan is a programming language in its own so can code the models direclty in it (some snippet code example of simple model)
   Knowing this we have the full flexibility to fit any model we want but we also have the full possibility that we make coding/interpretation
   errors that are not visible.
-  There are a couple of R packages to transcribe the standard R formula synthax into STAN models: rstanarm and brms. With this option we are sure that the model
-  code is correct and also optimized so it will certainly run faster than naive implementation directly in STAN. But one is limited by what the package developers have
+  There are a couple of R packages to transcribe the standard R formula synthax into Stan models: rstanarm and brms. With this option we are sure that the model
+  code is correct and also optimized so it will certainly run faster than naive implementation directly in Stan. But one is limited by what the package developers have
   implemented.}
   
  \end{frame}
@@ -495,7 +495,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
   \begin{itemize}
    \item JAGS: uses (mainly) Gibbs sampling which in essence decompose a complex problem into a set of simple ones, if possible JAGS will automatically sample from the posterior (conjugacy)
-   \item STAN: uses Hamiltonian-Monte Carlo, it gives momentum and gravity to the sampler, it is more efficient for sampling the posterior (fewer samples needed)
+   \item Stan: uses Hamiltonian-Monte Carlo, it gives momentum and gravity to the sampler, it is more efficient for sampling the posterior (fewer samples needed)
   \end{itemize}
   
   For more infos see:\\
@@ -512,7 +512,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    \begin{itemize}
    \item Chains: number of Markov chains ran, best to have at least 3
    \item Convergence: property of the Markov chains, at convergence the MCMC samples represent the posterior distribution
-   \item Divergence: property of the Markov chains, when the sampler does not effectively move in the parameter space, in STAN it specifically means that the Hamiltonian dynamics ran into that indicates potential bias in estimates.
+   \item Divergence: property of the Markov chains, when the sampler does not effectively move in the parameter space, in Stan it specifically means that the Hamiltonian dynamics ran into that indicates potential bias in estimates.
    \item Rhat: indicator to check convergence of the Markov chains, a value of 1 indicate convergence
    \item n\_eff: number of effective samples, due to autocorrelation in the Markov chains fewer samples are taken than expected, n\_eff / number of MCMC samples should be larger than 0.1
   \end{itemize}
@@ -546,7 +546,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
   \vspace*{0.2cm}
   
-  Both are readily available for STAN models through the \textbf{loo} package
+  Both are readily available for Stan models through the \textbf{loo} package
 
   
  \end{frame}
