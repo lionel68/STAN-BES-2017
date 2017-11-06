@@ -1,4 +1,4 @@
-############## An introduction to BDA using STAN ##################
+############## An introduction to BDA using Stan ##################
 #TO DO: make the relevant .stan code for each 4 models
 
 ############# Outline #########
@@ -19,7 +19,7 @@ library(reshape2)
 library(plyr)
 library(MASS)
 rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores()) #this allows STAN to run chains on parallel cores
+options(mc.cores = parallel::detectCores()) #this allows Stan to run chains on parallel cores
 
 ############## Set working directory #########
 
@@ -36,7 +36,7 @@ dat$y <- rnorm(100,modmat %*% betas, 1)
 ## Fit the model
 lin_brms <- brm(y ~ X1 * F1, dat)
 #in rstanarm you could use: stan_lm(y~X1*F1,dat)
-#you can look at the underlying STAN code using stancode(lin_brms)
+#you can look at the underlying Stan code using stancode(lin_brms)
 #for the pure stan code check: 
 #lin_stan <- stan(file = 'model_fitting/Models/normal_model_basic.stan',
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
@@ -116,7 +116,7 @@ dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 ### Fit the model, a standard poisson regression with no variation parameters
 poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
 #in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
-#you can again look at the underlying STAN code using stancode(poi_brms)
+#you can again look at the underlying Stan code using stancode(poi_brms)
 #or use:
 #poi_stan <- stan(file = 'model_fitting/Models/poisson_model_basic.stan',
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
@@ -305,7 +305,7 @@ abline(v=obs_0,col="orange",lwd=2)
 
 ### a second zero inflated overdispersed poisson model
 zib_brm <- brm(N ~ X1 + I(X1^2) + (1 | ID), dat, family = zero_inflated_poisson)
-#no option (yet) in rstanarm but relatively easy to code in STAN or JAGS
+#no option (yet) in rstanarm but relatively easy to code in Stan or JAGS
 #zib <- stan("model_fitting/Models/zero_inflated_overdispersed_poisson.stan",
 #            data=list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$N))
 
