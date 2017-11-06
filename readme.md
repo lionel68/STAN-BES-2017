@@ -1,4 +1,4 @@
-# STAN Workshop for BES conference in December 2017
+# Stan Workshop for BES conference in December 2017
 
 ## Structure workshop
 
