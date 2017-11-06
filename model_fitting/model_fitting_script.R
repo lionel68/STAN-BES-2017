@@ -381,8 +381,8 @@ compute_dist <- function(n=10,shape1=2,shape2=2){
   out$lik <- with(out,(lik - min(lik))/(max(lik)-min(lik)))
   out$post <- with(out,(post - min(post))/(max(post)-min(post)))
   par(mar=c(5,5,4,0))
-  plot(post~p_vals,out,type="l",col="orange",lwd=4,xlab="Values of parameter p, proportion of earth on Earth",ylab="Density (standardized)",
-       main=paste0("Density distribution for a sample size of: ",n[1],"\nand shape1: ",shape1," shape2: ",shape2),
+  plot(post~p_vals,out,type="l",col="orange",lwd=4,xlab="Values of parameter",ylab="Density (standardized)",
+       main=paste0("Density distribution for a sample size of: ",n[1]),
        ylim=c(0,1.5),cex.lab=2,cex.main=2)
   lines(out$p_vals,out$prior,col="darkgreen",lwd=4)
   lines(out$p_vals,out$lik,col="violet",lwd=4)
@@ -391,23 +391,23 @@ compute_dist <- function(n=10,shape1=2,shape2=2){
 }
 
 #low sample sizes
-png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1.png",width=800,height=800)
 compute_dist(n=5,shape1=5,shape2=2)
 dev.off()
 
-png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post2.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post2.png",width=800,height=800)
 compute_dist(n=10,shape1=5,shape2=2)
 dev.off()
 
-png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post3.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post3.png",width=800,height=800)
 compute_dist(n=20,shape1=5,shape2=2)
 dev.off()
 
-png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post4.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post4.png",width=800,height=800)
 compute_dist(n=100,shape1=5,shape2=2)
 dev.off()
 
-png("Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post5.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post5.png",width=800,height=800)
 compute_dist(n=20,shape1=1,shape2=1)
 dev.off()
 

@@ -230,7 +230,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    \column{.3\textwidth}
     \begin{itemize}
      \item Combine prior infos with new data
-     \item Probability of the parameter 
+     \item Probability (density) of the parameter 
      \item Weight of prior decline as sample size increases
     \end{itemize}
     
@@ -334,10 +334,11 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \note{Blind man in the likelihood landscape, how do we effectively sample it, it is hard to compute the integral in the numerator for typical analysis problems so we have to rely on computational techniques}
   
   \begin{figure}
-   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{like_surf.png}
+   \only<1>{\includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{likelihood.png}}
+   \only<2>{\includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{like_surf.png}}
   \end{figure}
 
-  {\scriptsize The sampler should travel around in the likelihood space but spend more time in area of high likelihood than in area of low likelihood}
+  \only<2>{\scriptsize The sampler should travel around in the likelihood space but spend more time in area of high likelihood mass than in area of low likelihood mass}
   %\maybe add an animation showing the first likelihood plot from a few slides before first, so that people better understand what this one is
   
   
@@ -347,12 +348,13 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
   
   \begin{enumerate}
-   \item Start with arbitrary parameter values and compute the likelihood at this point
-   \item Pick new values for all parameter in the model based on the prior distributions
-   \item Compute the new likelihood for these values
-   \item If the new likelihood is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
+   \item Start with arbitrary parameter values and compute the posterior (likelihood times prior) at this point
+   \item Pick new values for all parameter in the model (based on some proposal distribution)
+   \item Compute the new posterior for these values
+   \item If the new posterior is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
   \end{enumerate}
 
+  See: \url{https://theoreticalecology.wordpress.com/2010/09/17/metropolis-hastings-mcmc-in-r/} 
   
   \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
   Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
@@ -366,11 +368,11 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    \column{.4\textwidth}
     \includegraphics[width=\textwidth,height=.4\textheight,keepaspectratio]{globe.jpeg}
     
-    \only<1>{We tossed the globe 10 times and we landed 3 times on land. The parameter to estimate is: $\mathcal{B}(10, p)$
+    \only<1>{We tossed the globe 10 times and we landed 3 times on land. The parameter to estimate is: $\mathcal{B}(10, p)$, we assume flat prior.
     
-    \vspace*{0.2cm}
+    \vspace*{0.1cm}
     
-    {\scriptsize (Example from Statistical rethinking, Richard McElreath)}}
+    {\tiny (Example from Statistical rethinking, Richard McElreath)}}
     
     \only<2->{
     
@@ -492,15 +494,14 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   Different MCMC algorithms are available:
   
   \begin{itemize}
-   \item JAGS: tunes the MCMC algorithm to find the best one according to the model (conjugate priors, Metropolis-Hastings ...), most of these show random-walk behavior
-   \item STAN: uses Hamiltonian-Monte Carlo another class of MCMC sampling algorithm, it is more efficient for sampling the posterior (fewer samples needed) but need some careful tuning
+   \item JAGS: uses (mainly) Gibbs sampling which in essence decompose a complex problem into a set of simple ones, if possible JAGS will automatically sample from the posterior (conjugacy)
+   \item STAN: uses Hamiltonian-Monte Carlo, it gives momentum and gravity to the sampler, it is more efficient for sampling the posterior (fewer samples needed)
   \end{itemize}
   
   For more infos see:\\
   M. Betancourt, \url{https://arxiv.org/abs/1701.02434}\\
-  C.C. Monnahan, \url{http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12681/full}
-  
-
+  C.C. Monnahan, \url{http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12681/full}\\
+  \url{https://www.youtube.com/watch?v=VnNdhsm0rJQ}
   
  \end{frame}
  
@@ -511,7 +512,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    \begin{itemize}
    \item Chains: number of Markov chains ran, best to have at least 3
    \item Convergence: property of the Markov chains, at convergence the MCMC samples represent the posterior distribution
-   \item Divergence: property of the Markov chains, when the sampler does not effectively move in the parameter space
+   \item Divergence: property of the Markov chains, when the sampler does not effectively move in the parameter space, in STAN it specifically means that the Hamiltonian dynamics ran into that indicates potential bias in estimates.
    \item Rhat: indicator to check convergence of the Markov chains, a value of 1 indicate convergence
    \item n\_eff: number of effective samples, due to autocorrelation in the Markov chains fewer samples are taken than expected, n\_eff / number of MCMC samples should be larger than 0.1
   \end{itemize}
@@ -587,7 +588,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
    \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{cogs_f.png}
   \end{figure}
 
-  Note that this also applies to frequentist approaches
+  Note that this also applies to frequentist approaches (assuming fixed parameter values)
   
  \end{frame}
 
@@ -639,15 +640,16 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
  \end{frame}
  
+ \section*{}
+ 
  \begin{frame}
-  \frametitle{\bf A picture can save a thousand words}
+  \frametitle{\bf Time for some coding}
   
-  \begin{figure}
-   \includegraphics[width=\textwidth,height=.8\textheight,keepaspectratio]{frequentists_vs_bayesians.png}
-  \end{figure}  
-  %\add figure source?
- \end{frame}
-
+ \begin{center}
+  Open the \textit{model\_fitting\_script.R} file
+ \end{center}
+ 
+\end{frame}
  
 \end{document}
 
