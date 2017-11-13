@@ -13,11 +13,10 @@
 library(rstan)
 library(bayesplot)
 library(brms)
-library(shinystan)
 library(ggplot2)
 library(reshape2)
-library(plyr)
-library(MASS)
+library(plyr) #for adply
+library(MASS) #for mvrnorm
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()) #this allows Stan to run chains on parallel cores
 
