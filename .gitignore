@@ -6,4 +6,7 @@
 *.out
 *.snm
 *.Rhistory
-
+*.png
+*.jpg
+*.jpeg
+*.aux
