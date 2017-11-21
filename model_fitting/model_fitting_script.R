@@ -33,7 +33,14 @@ betas <- runif(dim(modmat)[2],-2,2)
 dat$y <- rnorm(100,modmat %*% betas, 1)
 
 ## Fit the model
-lin_brms <- brm(y ~ X1 * F1, dat)
+lin_brms <- brm(y ~ X1 * F1, dat) #where are the priors?
+prior <- get_prior(y ~ X1 * F1, dat)
+#flat priors for all slope parameters, only the sd get a default prior:
+curve(dt(x = x,df = 3,ncp=10),0,40)
+#define new priors:
+priors <- c(prior(normal(0,20),class="Intercept"),prior(cauchy(0,5),class="b"))
+#new model
+lin_brms2 <- brm(y ~ X1 * F1, dat,prior=priors)
 #in rstanarm you could use: stan_lm(y~X1*F1,dat)
 #you can look at the underlying Stan code using stancode(lin_brms)
 #for the pure stan code check: 
@@ -41,7 +48,7 @@ lin_brms <- brm(y ~ X1 * F1, dat)
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 #get the MCMC samples
-lin_mcmc <- as.matrix(lin_brms) 
+lin_mcmc <- as.matrix(lin_brms2) 
 
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
@@ -346,8 +353,11 @@ ggplot(dat,aes(x=X1,y=N))+geom_point()+
 
 #try out to make prior, likelihood and posterior distribution from
 #a binomial problem
-compute_dist <- function(n=10,shape1=2,shape2=2){
+compute_dist <- function(n=10,shape1=2,shape2=2,type="1"){
+  library(RColorBrewer)
   set.seed(20171023)
+  
+  cols <- brewer.pal(3,"Set1")
   #values of parameter p to try out
   p_vals <- seq(0,1,length=100)
   #the prior distribution
@@ -367,18 +377,31 @@ compute_dist <- function(n=10,shape1=2,shape2=2){
   out$lik <- with(out,(lik - min(lik))/(max(lik)-min(lik)))
   out$post <- with(out,(post - min(post))/(max(post)-min(post)))
   par(mar=c(5,5,4,0))
-  plot(post~p_vals,out,type="l",col="orange",lwd=4,xlab="Values of parameter",ylab="Density (standardized)",
+  plot(prior~p_vals,out,type="l",col=cols[1],lwd=4,xlab="Values of parameter",ylab="Density (standardized)",
        main=paste0("Density distribution for a sample size of: ",n[1]),
        ylim=c(0,1.5),cex.lab=2,cex.main=2)
-  lines(out$p_vals,out$prior,col="darkgreen",lwd=4)
-  lines(out$p_vals,out$lik,col="violet",lwd=4)
-  legend("topleft",legend=c("prior","likelihood","posterior"),lwd=4,bty="n",col=c("darkgreen","violet","orange"),cex=3)
+  if(type == "2"){
+    lines(out$p_vals,out$lik,col=cols[2],lwd=4,lty=2)
+  }
+  else if(type == "3"){
+    lines(out$p_vals,out$lik,col=cols[2],lwd=4,lty=2)
+    lines(out$p_vals,out$post,col=cols[3],lwd=4,lty=3)
+  }
+  legend("topleft",legend=c("prior","likelihood","posterior"),lwd=4,lty=1:3,bty="n",col=cols,cex=3)
   return()
 }
 
 #low sample sizes
-png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1.png",width=800,height=800)
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1_1.png",width=800,height=800)
 compute_dist(n=5,shape1=5,shape2=2)
+dev.off()
+
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1_2.png",width=800,height=800)
+compute_dist(n=5,shape1=5,shape2=2,type="2")
+dev.off()
+
+png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post1_3.png",width=800,height=800)
+compute_dist(n=5,shape1=5,shape2=2,type="3")
 dev.off()
 
 png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post2.png",width=800,height=800)
@@ -386,7 +409,7 @@ compute_dist(n=10,shape1=5,shape2=2)
 dev.off()
 
 png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post3.png",width=800,height=800)
-compute_dist(n=20,shape1=5,shape2=2)
+compute_dist(n=20,shape1=5,shape2=2,type="3")
 dev.off()
 
 png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post4.png",width=800,height=800)
@@ -394,7 +417,7 @@ compute_dist(n=100,shape1=5,shape2=2)
 dev.off()
 
 png("~/Documents/PostDoc_Ghent/Course/Workshop_BES/GitFolder/introduction/Figures/post5.png",width=800,height=800)
-compute_dist(n=20,shape1=1,shape2=1)
+compute_dist(n=20,shape1=1,shape2=1,type="3")
 dev.off()
 
 #6 distribution to talk about the prior distribution
@@ -459,4 +482,9 @@ abline(v=0.5,col="orange",lwd=3)
 abline(v=0.2,col="orange",lwd=3)
 abline(v=0.15,col="orange",lwd=2,lty=2)
 dev.off()
+
+#interpretation earth toss example
+dat <- data.frame(IsEarth = rbinom(n = 10,size = 10,prob = 0.3))
+mf <- glm(cbind(IsEarth,10-IsEarth) ~ 1, dat, family = binomial)
+summary(mf)
 

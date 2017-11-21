@@ -187,7 +187,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
 
  \begin{frame}
-  \frametitle{\bf The prior: our eductaed guess about the world}
+  \frametitle{\bf The priors: our educated guesses about the world}
   
   Amongst the following probability distribution which one would you think represent plausible distribution of the slope of plant richness effect on plant biomass?
   
@@ -201,6 +201,21 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
  \end{frame}
  
+ 
+ \begin{frame}
+  \frametitle{\bf The priors: how to construct them}
+  
+  \begin{figure}
+      \includegraphics[width=.9\textwidth,height=.7\textheight,keepaspectratio]{card.png}
+      \caption{Cardinale et al, (2012) PNAS}
+  \end{figure}
+
+  
+ 
+ 
+ \end{frame}
+ 
+ 
   \begin{frame}
   \frametitle{\bf The posterior: everything we ever wanted (from a statistical model)}
   
@@ -213,10 +228,10 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
     \end{itemize}
     
     \column{.7\textwidth}
-    \only<1>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post1.png}}
-    \only<2>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post2.png}}
-    \only<3>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post3.png}}
-    \only<4>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post4.png}}
+    \only<1>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post1_1.png}}
+    \only<2>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post1_2.png}}
+    \only<3>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post1_3.png}}
+    \only<4>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post3.png}}
     \only<5>{\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{post5.png}}
 %\if possible adjust so that images and text don't move up and down during animations
   \end{columns}
@@ -291,8 +306,7 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
     \item rstanarm
     \item brms
    \end{itemize}
-
-
+   With these packages one can easily do Bayesian Data Analysis without needing to learn a new language.
   \end{columns}
 
   
@@ -439,15 +453,9 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
     \only<7>{Do this many times}}
    
   \end{columns}
-
-  
-  
-  
-  
-  
  \end{frame}
 
- \begin{frame}
+\begin{frame}
   \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
   
   \begin{enumerate}
@@ -462,28 +470,9 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
   Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
   
- \end{frame}
+ \end{frame} 
 
-
-  \begin{frame}
-  \frametitle{\bf Different MCMC algorithm / samplers}
-  
-  Different MCMC algorithms are available:
-  
-  \begin{itemize}
-   \item JAGS: uses (mainly) Gibbs sampling which in essence decompose a complex problem into a set of simple ones, if possible JAGS will automatically sample from the posterior (conjugacy)
-   \item Stan: uses Hamiltonian-Monte Carlo, it gives momentum and gravity to the sampler, it is more efficient for sampling the posterior (fewer samples needed)
-  \end{itemize}
-  
-  For more infos see:\\
-  M. Betancourt, \url{https://arxiv.org/abs/1701.02434}\\
-  C.C. Monnahan, \url{http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12681/full}\\
-  \url{https://www.youtube.com/watch?v=VnNdhsm0rJQ}
-  
- \end{frame}
- 
-   
-  \begin{frame}
+ \begin{frame}
   \frametitle{\bf Elements of Bayesian vocabulary}
   
    \begin{itemize}
@@ -530,6 +519,17 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  
 
 \section{Why?}
+ 
+  
+ \begin{frame}
+  \frametitle{\bf Difference between frequentist and bayesian inference}
+  
+  \begin{itemize}
+   \item Frequentist approaches are based on the \textbf{likelihood} (probability of the data given the parameters) only, inference statement are based on imaginary repetition of the data collection.
+   \item Bayesian approach is based on the \textbf{posterior} (probability of the model given the data and the prior), inference statement can be interpreted in terms of probability of the parameters.   
+  \end{itemize}
+ \end{frame}
+
  
   \begin{frame}
   \frametitle{\bf Embracing uncertainty}
@@ -585,21 +585,6 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
    \note{Bayesian data analysis give us relevant answers in terms of probability rather than weird answers refering to some null hypothesis in
   terms of frequency, }
-  
- \end{frame}
- 
-  \begin{frame}
-  \frametitle{\bf No degrees of freedom}
-  
-  With Bayesian approach we can fit models with more parameters than data points
-  
-  \vspace*{0.3cm}
-  
-  This is due to the prior distributions, it provides extra information to the model along the observed data
-  
-  \vspace*{0.3cm}
-  
-  BUT this does not absolve us from statistical machismo (sensu Brian McGill)
   
  \end{frame}
  
