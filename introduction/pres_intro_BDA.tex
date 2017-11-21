@@ -3,17 +3,18 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage[font=scriptsize,skip=1pt]{caption}
-\usepackage{textpos}
-\usepackage{multirow}
-\usepackage{multicol}
+\usepackage[T1]{fontenc}
+%\usepackage{textpos}
+%\usepackage{multirow}
+%\usepackage{multicol}
 %\usepackage{wrapfig}
 \usepackage[labelformat=empty]{caption}
 \usepackage[labelformat=empty,skip=0pt,justification=raggedright]{subcaption}
 \usepackage{remreset}
 \usepackage{multimedia}
-\usepackage{mdframed}
+%\usepackage{mdframed}
 \usepackage{natbib}
-\usepackage[export]{adjustbox}
+%\usepackage[export]{adjustbox}
 
 \definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
 \definecolor{bubbles}{rgb}{0.91, 1.0, 1.0}
@@ -68,7 +69,7 @@
    \item Small group discussion on specific themes (circa. 30min)
   \end{enumerate}
   
-  Make sure to check the github page of the workshop: \url{https://github.com/lionel68/Stan-BES-2017}
+  Make sure to check the github page of the workshop: \url{https://github.com/lionel68/STAN-BES-2017}
 
  
  \end{frame}
@@ -86,32 +87,6 @@
  
  
 \section*{What?} 
- 
- \begin{frame}
-  \frametitle{\bf Why do we do Stats?}
-
-  \begin{enumerate}
-   \item To test hypothesis?
-   \item To explore patterns and relationships?
-   \item To predict / forecast to new place and time?
-  \end{enumerate}
-
-  \vspace*{0.5cm}
-
-  More reasons to do stats?
-  
-  \vspace*{0.2cm}
-  
-  Bayesian data analysis is one way to do stats, it is well suited for some situation but poorly suited for others.
-  
-  \note{Some elements of inference, how does it fits into the science workflow
-  Scientists are interested with understanding and explaining the processes structuring the world, build theories to synthetically represent what is happening.
-  Data are then assembled/collected and one wants to extract the big world signal in the data, statistical inference provide this bridge between complex data and
-  theories.} 
-  
-  
-  
- \end{frame}
 
  
  \begin{frame}
@@ -148,7 +123,7 @@
   \frametitle{\bf What is Bayesian Data Analysis?}
   
     
-  $Posterior \propto Likelihood * Prior$
+  Posterior $\propto$ Likelihood * Prior
   
   \vspace*{1cm}
   
@@ -183,7 +158,7 @@
     \mu_i = a + b_1 * x1 + b_2 * x2
    \]
 
-Which is called the \textsc{likelihood}, the probability of the data given the model. 
+Which is called the \textsc{likelihood}, the probability of the data given the model: Prob(data | model) 
    
   
   \note{Prob of the data knowing the parameters, what is hidden behind the (G)LM(M) motor
@@ -197,11 +172,14 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \begin{frame}
   \frametitle{\bf The likelihood: a graphical example}
   
-  \includegraphics[width=\textwidth,height=.75\textheight,keepaspectratio]{likelihood.png}
+  \begin{itemize}
+   \item The data: 10 coin flips giving 5 heads
+   \item The parameter: \textbf{p} the probability of heads
+   \item The likelihood: Prob(5 | p) = Binom(n=10, p)
+  \end{itemize}
+
   
-  \[
-   y \sim \mathcal{B}(n = 10,size = 1,prob = 0.5)
-  \]
+  \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{likelihood.png}
   
   \note{critical part of modelling: as long as we can write down the likelihood of our model we have great freedom}
 
@@ -345,23 +323,6 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
  
  \begin{frame}
-  \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
-  
-  \begin{enumerate}
-   \item Start with arbitrary parameter values and compute the posterior (likelihood times prior) at this point
-   \item Pick new values for all parameter in the model (based on some proposal distribution)
-   \item Compute the new posterior for these values
-   \item If the new posterior is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
-  \end{enumerate}
-
-  See: \url{https://theoreticalecology.wordpress.com/2010/09/17/metropolis-hastings-mcmc-in-r/} 
-  
-  \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
-  Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
-  
- \end{frame}
- 
- \begin{frame}
   \frametitle{\bf A simple MCMC example: How much earth is on Earth?}
   
   \begin{columns}
@@ -486,6 +447,22 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
  \end{frame}
 
+ \begin{frame}
+  \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
+  
+  \begin{enumerate}
+   \item Start with arbitrary parameter values and compute the posterior (likelihood times prior) at this point
+   \item Pick new values for all parameter in the model (based on some proposal distribution)
+   \item Compute the new posterior for these values
+   \item If the new posterior is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
+  \end{enumerate}
+
+  See: \url{https://theoreticalecology.wordpress.com/2010/09/17/metropolis-hastings-mcmc-in-r/} 
+  
+  \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
+  Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
+  
+ \end{frame}
 
 
   \begin{frame}

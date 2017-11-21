@@ -53,7 +53,7 @@ pp_check(lin_brms,type = "dens_overlay",nsamples=100)
 pp_check(lin_brms,type = "stat_2d")
 pp_check(lin_brms,type = "stat")
 #could also use shinystan
-#launch_shiny(lin_brms)
+launch_shiny(lin_brms)
 
 ## Do model inference
 #summaries of parameters
@@ -84,18 +84,6 @@ names(predd)[1:2] <- c("MCMC_id","predict")
 #in this plot with 100 realization of the regression line
 ggplot(predd,aes(x=X1,y=predict,color=F1))+geom_path()+
   geom_point(data=dat,aes(x=X1,y=y))
-
-##[Maxime] OK with removing all this below  (up to "testing hypothesis" to improve clarity)               
-#[Lionel]: I would remove this, might be a bit confusing ...
-#posterior predictive distribution for each data points
-#predI <- apply(lin_mcmc[rnd_mcmc,1:5],1,function(x) rnorm(100,modmat %*% x[-5],x[5]))
-#predD <- melt(predI)
-
-#[Maxime]plot below doesn't work as there is no Var2 in predD
-#[Lionel] it worked for me ...
-#ggplot(predD,aes(x=Var1,y=value))+geom_line(aes(group=Var2))+
-#  geom_point(data=dat,aes(x=1:100,y=y),color="red",size=3)+
-#  labs(x="Row index",y="Y value")
 
 #testing hypothesis
 #for instance the hypothesis that the effect of F1 is stronger than the effect of X1
@@ -134,8 +122,7 @@ pp_check(poi_brms,type = "dens_overlay",nsamples=100)
 pp_check(poi_brms,type = "stat_2d")
 #mean is pretty much ok but sd is way lower in predictions than in the data
                
-#[Maxime] I'd comment he plot below out to avoid having too many plots
-#not needed for demonstration, but can be accessed by people if they want
+
 #use quantile regression to get this infos
 #ppred <- apply(poi_mcmc[,-5],1,function(x) rpois(100,exp(modmat %*% x))) #compute post predictive distribution
 #qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
@@ -162,8 +149,8 @@ neff_ratio(nb_brms)
 #posterior predictive check
 pp_check(nb_brms,type = "dens_overlay",nsamples=100)
 pp_check(nb_brms,type = "stat_2d")
+
 #again some quantile regression
-#[Maxime] commented out, same as above
 #ppred <- apply(nb_mcmc[,-6],1,function(x) rnbinom(100,mu=exp(modmat %*% x[1:4]),size=x[5]))
 #qrs <- sapply(1:100,function(i) mean(ppred[i,] < dat$y[i])) #compare pp to actual data
 #hist(qrs,freq=FALSE,col="grey")
