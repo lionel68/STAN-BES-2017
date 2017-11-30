@@ -4,8 +4,8 @@
 ############# Outline #########
 
 # Four models will be explored:
-# Linear model (gaussian regression)
-# Generalized linear model with overdispersion 
+# Linear model (gaussian regression) with brms
+# Generalized linear model with overdispersion with rstanarm
 # Generalized Linear Mixed effect model (with gaussian regression)
 # Zero-inflated overdispersed generalized linear model
 
@@ -17,6 +17,7 @@ library(ggplot2)
 library(reshape2)
 library(plyr) #for adply
 library(MASS) #for mvrnorm
+library(rstanarm)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores()) #this allows Stan to run chains on parallel cores
 
@@ -41,7 +42,7 @@ curve(dt(x = x,df = 3,ncp=10),0,40)
 priors <- c(prior(normal(0,20),class="Intercept"),prior(cauchy(0,5),class="b"))
 #new model
 lin_brms2 <- brm(y ~ X1 * F1, dat,prior=priors)
-#in rstanarm you could use: stan_lm(y~X1*F1,dat)
+#in rstanarm you could use: stan_lm(y~X1*F1,dat,prior=R2(1))
 #you can look at the underlying Stan code using stancode(lin_brms)
 #for the pure stan code check: 
 #lin_stan <- stan(file = 'model_fitting/Models/normal_model_basic.stan',
@@ -52,19 +53,19 @@ lin_mcmc <- as.matrix(lin_brms2)
 
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
-mcmc_trace(as.mcmc(lin_brms))
-rhat(lin_brms)
-neff_ratio(lin_brms)
+mcmc_trace(as.mcmc(lin_brms2))
+rhat(lin_brms2)
+neff_ratio(lin_brms2)
 #posterior predictive check
-pp_check(lin_brms,type = "dens_overlay",nsamples=100)
-pp_check(lin_brms,type = "stat_2d")
-pp_check(lin_brms,type = "stat")
+pp_check(lin_brms2,type = "dens_overlay",nsamples=100)
+pp_check(lin_brms2,type = "stat_2d")
+pp_check(lin_brms2,type = "stat")
 #could also use shinystan
-launch_shiny(lin_brms)
+launch_shiny(lin_brms2)
 
 ## Do model inference
 #summaries of parameters
-mcmc_areas(as.mcmc(lin_brms),regex_pars="b")
+mcmc_areas(as.mcmc(lin_brms2),regex_pars="b")
 #standard regression lines with 95% credible intervals
 #create a new data frame where prediction should be computed
 pred <- expand.grid(X1=seq(-2,2,0.1),F1=factor(1:2))
@@ -108,25 +109,30 @@ betas <- c(2,0.1,-0.05,-0.15)
 dat$y <- rnbinom(100,mu=exp(modmat %*% betas),size=2.5)
 
 ### Fit the model, a standard poisson regression with no variation parameters
-poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
-#in rstanarm you could do: stan_glm(y~X1*X2,dat,family=poisson)
+#this time fit using rstanarm
+poi_arm <- stan_glm(y~X1*X2,dat,family=poisson)
+#in brms you could do:
+#poi_brms <- brm(y~X1*X2,data = dat,family = poisson)
 #you can again look at the underlying Stan code using stancode(poi_brms)
 #or use:
 #poi_stan <- stan(file = 'model_fitting/Models/poisson_model_basic.stan',
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
+#check the default priors
+prior_summary(poi_arm)
+
 
 #get the MCMC samples
-poi_mcmc <- as.matrix(poi_brms)
+poi_mcmc <- as.matrix(poi_arm)
 
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
-mcmc_trace(as.mcmc(poi_brms))
-rhat(poi_brms)
-neff_ratio(poi_brms)
+mcmc_trace(poi_mcmc)
+rhat(poi_arm)
+neff_ratio(poi_arm)
 #posterior predictive check
-pp_check(poi_brms,type = "dens_overlay",nsamples=100)
-pp_check(poi_brms,type = "stat_2d")
+pp_check(poi_arm,plotfun = "dens_overlay",nreps=100)
+pp_check(poi_arm,plotfun = "stat_2d")
 #mean is pretty much ok but sd is way lower in predictions than in the data
                
 
@@ -139,23 +145,23 @@ pp_check(poi_brms,type = "stat_2d")
 #so clear example of overdispersion in data
 
 ### Use overdispersed poisson
-nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
-#in rstanarm: stan_glm.nb(y~X1*X2,dat)
+nb_arm <- stan_glm.nb(y~X1*X2,dat)
 #or use:
+#nb_brms <- brm(y~X1*X2,data = dat,family = negbinomial)
 #nb_stan <- stan(file = 'model_fitting/Models/neg_binomial_basic.stan',
 #                 data = list(N=nrow(dat),K=ncol(modmat),X=modmat,y=dat$y))
 
 #get the MCMC samples
-nb_mcmc <- as.matrix(nb_brms)
+nb_mcmc <- as.matrix(nb_arm)
   
 ## Check the model
 #convergence checks with traceplot, Rhat and effective sample size
-mcmc_trace(as.mcmc(nb_brms))
-rhat(nb_brms)
-neff_ratio(nb_brms)
+mcmc_trace(nb_mcmc)
+rhat(nb_arm)
+neff_ratio(nb_arm)
 #posterior predictive check
-pp_check(nb_brms,type = "dens_overlay",nsamples=100)
-pp_check(nb_brms,type = "stat_2d")
+pp_check(nb_arm,plotfun = "dens_overlay",nreps=100)
+pp_check(nb_arm,plotfun = "stat_2d")
 
 #again some quantile regression
 #ppred <- apply(nb_mcmc[,-6],1,function(x) rnbinom(100,mu=exp(modmat %*% x[1:4]),size=x[5]))
@@ -166,7 +172,7 @@ pp_check(nb_brms,type = "stat_2d")
 
 ## Do model inference
 #summaries of parameters
-mcmc_areas(as.mcmc(nb_brms),regex_pars="b")
+mcmc_areas(nb_mcmc,pars=c("(Intercept)","X1","X2","X1:X2"))
 #standard regression lines with 95% credible intervals
 #create a new data frame where prediction should be computed
 pred <- expand.grid(X1=seq(-2,2,0.1),X2=c(-2,0,2))
