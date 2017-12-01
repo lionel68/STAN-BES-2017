@@ -24,8 +24,8 @@ stan_glm(mpg ~ cyl,family="gaussian",data=mtcars)
 ## Structure of the workshop
 
 * 45min general introduction into Bayesian data analysis, 15min Lionel, 15min Maxime
-* 45min interactive fitting of models using brms (or rstanarm?), using shinystan for checking model fitness, learn about convergence issues, fit models of increasing complexity:
-..1. Linear model 
-..2. Generalized Linear Model (Negative Binomial)
-..3. (Mixed-effect models, varying intercept, varying intercept and slopes, crossed and nested random effects)
-..4. (Zero-inflated overdispersed poisson model)
+* 45min interactive coding session using **brms** and **rstanarm** to explore typical Bayesian Data Analysis workflow (fit models, checking, model expansion, setting priors, inference). The following models will be fitted:
+  *  Linear model 
+  *  Generalized Linear Model (Negative Binomial)
+  *  (Mixed-effect models, varying intercept, varying intercept and slopes, crossed and nested random effects)
+  *  (Zero-inflated overdispersed poisson model)
