@@ -12,7 +12,7 @@ To make the most of the coding session please come to the workshop with the foll
 * plyr
 * MASS
 
-In addition **windows** users will most certainly need to install the RTools, please follow the instruction given on [this page](https://github.com/stan-dev/rstan/wiki/Install-Rtools-for-Windows).
+In addition **windows** users will most certainly need to install RTools, please follow the instruction given on [this page](https://github.com/stan-dev/rstan/wiki/Install-Rtools-for-Windows).
 
 To ensure a smooth start in the coding session check if you can run Stan models from R by running:
 
@@ -27,5 +27,5 @@ stan_glm(mpg ~ cyl,family="gaussian",data=mtcars)
 * 45min interactive fitting of models using brms (or rstanarm?), using shinystan for checking model fitness, learn about convergence issues, fit models of increasing complexity:
 ..1. Linear model 
 ..2. Generalized Linear Model (Negative Binomial)
-..(3. Mixed-effect models, varying intercept, varying intercept and slopes, crossed and nested random effects)
-..(4. Zero-inflated overdispersed poisson model)
+..3. (Mixed-effect models, varying intercept, varying intercept and slopes, crossed and nested random effects)
+..4. (Zero-inflated overdispersed poisson model)
