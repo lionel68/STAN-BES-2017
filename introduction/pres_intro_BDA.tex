@@ -64,9 +64,8 @@
 \begin{frame}
  \frametitle{\bf Structure of the workshop}
   \begin{enumerate}
-   \item General introduction to Bayesian Data Analysis (circa. 30min)
-   \item Examples of BDA workflow (circa. 30min)
-   \item Small group discussion on specific themes (circa. 30min)
+   \item General introduction to Bayesian Data Analysis (circa. 45min)
+   \item Examples of BDA workflow (circa. 45min)
   \end{enumerate}
   
   Make sure to check the github page of the workshop: \url{https://github.com/lionel68/STAN-BES-2017}
@@ -456,17 +455,22 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
 
 \begin{frame}
-  \frametitle{\bf A simple Markov Chain Monte Carlo algorithm}
+  \frametitle{\bf MCMC sampling in real life}
   
-  \begin{enumerate}
-   \item Start with arbitrary parameter values and compute the posterior (likelihood times prior) at this point
-   \item Pick new values for all parameter in the model (based on some proposal distribution)
-   \item Compute the new posterior for these values
-   \item If the new posterior is larger than the old one, accept the new value (take one sample) if not jump to the new value based on some probability
-  \end{enumerate}
+  JAGS and Stan use different samplers, both have strength and weaknesses.
+  
+  \begin{figure}
+   \includegraphics[width=.6\textwidth,height=.4\textheight,keepaspectratio]{sampling_mcmc.png}
+   \caption{Stan uses Hamiltonian Monte-Carlo sampling which can be thought as sending a satellite with some momentum to sample around earth. Michael Betancourt (2017) \url{https://arxiv.org/abs/1701.02434}}
+  \end{figure}
 
-  See: \url{https://theoreticalecology.wordpress.com/2010/09/17/metropolis-hastings-mcmc-in-r/} 
   
+  More informations on sampling in JAGS and Stan:
+  \begin{itemize}
+   \item \url{https://www.youtube.com/watch?v=VnNdhsm0rJQ}
+   \item \url{http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12681/full}
+  \end{itemize}
+
   \note{Markov Chain Monte Carlo: stochastic transition within parameter space only based on current and proposed jump.
   Key point: at convergence the MCMC samples will equal the posterior distribution, the MCMC samples are not stricto sensu the posterior}
   
