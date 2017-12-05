@@ -14,6 +14,7 @@
 \usepackage{multimedia}
 %\usepackage{mdframed}
 \usepackage{natbib}
+\usepackage{calligra}
 %\usepackage[export]{adjustbox}
 
 \definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
@@ -42,6 +43,9 @@
 \@removefromreset{subsection}{section}
 \makeatother
 \setcounter{subsection}{1}
+
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+
 
 
 \graphicspath{{./Figures/}}
@@ -563,13 +567,22 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
  \end{frame}
  
  \begin{frame}
-  \frametitle{\bf Models as data-generating processes}
+  \frametitle{\bf Models as data storytelling}
+  \begin{center}
+   \calligra Once upon a time\\
+  \-\ \-\ in a lab / field site far, far away ...
+  \end{center}
   
   \begin{figure}
-   \includegraphics[width=\textwidth,height=.7\textheight,keepaspectratio]{cogs_f.png}
+   \includegraphics[width=.6\textwidth,height=.4\textheight,keepaspectratio]{jena.jpeg}
   \end{figure}
 
-  Note that this also applies to frequentist approaches (assuming fixed parameter values)
+  \begin{itemize}
+   \small
+   \item BDA allow great freedom in model building taking into account, if needed, sampling design, measurement processes ...
+   \item Rather than squeeze your data to fit specific model assumptions, in BDA the models are adapted to the data
+  \end{itemize}
+
   
  \end{frame}
 
@@ -613,6 +626,10 @@ Which is called the \textsc{likelihood}, the probability of the data given the m
   
  \begin{center}
   Open the \textit{model\_fitting\_script.R} file
+  
+  \vspace*{1cm}
+  
+  Can be found here: \url{https://github.com/lionel68/STAN-BES-2017}
  \end{center}
  
 \end{frame}
