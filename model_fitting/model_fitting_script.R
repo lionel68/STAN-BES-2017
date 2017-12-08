@@ -1,5 +1,4 @@
 ############## An introduction to BDA using Stan ##################
-#TO DO: make the relevant .stan code for each 4 models
 
 ############# Outline #########
 
@@ -18,8 +17,8 @@ library(reshape2)
 library(plyr) #for adply
 library(MASS) #for mvrnorm
 library(rstanarm)
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores()) #this allows Stan to run chains on parallel cores
+#rstan_options(auto_write = TRUE)
+#options(mc.cores = parallel::detectCores()) #this allows Stan to run chains on parallel cores
 
 ############## Set working directory #########
 
