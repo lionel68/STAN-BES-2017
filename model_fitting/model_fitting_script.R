@@ -7,6 +7,7 @@
 # Generalized linear model with overdispersion with rstanarm
 # Generalized Linear Mixed effect model (with gaussian regression)
 # Zero-inflated overdispersed generalized linear model
+# Non-linear model with hierarchical structure
 
 ############### Load libraries ############
 library(rstan)
@@ -350,7 +351,25 @@ ggplot(dat,aes(x=X1,y=N))+geom_point()+
   labs(x="Environmental gradient",y="Counts")
 #[Maxime] I have some warnings that plotting ignore some  y lines; will look into it in more detail
 
+########### Non-linear model with hierarchical structure ############
+
+#data simulation
+
+#prior
+prior=c(
+  set_prior("uniform(0,500)", class= "b",nlpar="a",coef="Intercept"),set_prior("normal(0,5)", class= "b",nlpar="a",coef="density"),
+  set_prior("normal(0,5)", class= "b",nlpar="a",coef="sex"),
+  set_prior("normal(200,100)", class= "b",nlpar="b",coef="Intercept"),set_prior("normal(0,5)", class= "b",nlpar="b",coef="density"),
+  set_prior("normal(0,5)", class= "b",nlpar="b",coef="sex"),
+  set_prior("normal(50,20)", class= "b",nlpar="c",coef="Intercept"),set_prior("normal(0,5)", class= "b",nlpar="c",coef="density")
+  set_prior("normal(0,5)", class= "b",nlpar="c",coef="sex")
+)
+#fitting model
+mod=brm(brmsformula(Y~a/(1+exp((b-X)/c)),a~density+sex,b~density*sex,c~density+sex,nl=TRUE),data=data,prior=prior,iter=20000)
+
+
 ########### end of the training session script ###########
+
 
 
 ######## Code to generate some of the figures in the introduction presentation ######
